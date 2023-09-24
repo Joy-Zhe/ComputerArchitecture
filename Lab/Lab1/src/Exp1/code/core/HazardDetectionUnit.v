@@ -11,5 +11,29 @@ module HazardDetectionUnit(
     output[1:0] forward_ctrl_A, forward_ctrl_B
 );
             //according to the diagram, design the Hazard Detection Unit
+    assign PC_EN_IF = ~Branch_ID & ~rs1use_ID & ~rs2use_ID & 
+        (hazard_optype_ID == 2'b00);
+    assign reg_FD_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID & 
+        (hazard_optype_ID == 2'b00);
+    assign reg_FD_stall = (hazard_optype_ID == 2'b01) & 
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
+    assign reg_FD_flush = (hazard_optype_ID == 2'b10) & 
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));  
+    assign reg_DE_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
+        (hazard_optype_ID == 2'b00);
+    assign reg_DE_flush = (hazard_optype_ID == 2'b10) & 
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
+    assign reg_EM_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
+        (hazard_optype_ID == 2'b00);
+    assign reg_EM_flush = (hazard_optype_ID == 2'b10) & 
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
+    assign reg_MW_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
+        (hazard_optype_ID == 2'b00);
+    assign forward_ctrl_ls = (hazard_optype_ID == 2'b01) & 
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
+    assign forward_ctrl_A = (hazard_optype_ID == 2'b01) &
+        (rd_EXE == rs1_ID);
+    assign forward_ctrl_B = (hazard_optype_ID == 2'b01) &
+        (rd_EXE == rs2_ID);
 
 endmodule
