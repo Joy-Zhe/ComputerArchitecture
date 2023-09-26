@@ -10,30 +10,72 @@ module HazardDetectionUnit(
     output forward_ctrl_ls,
     output[1:0] forward_ctrl_A, forward_ctrl_B
 );
-            //according to the diagram, design the Hazard Detection Unit
-    assign PC_EN_IF = ~Branch_ID & ~rs1use_ID & ~rs2use_ID & 
-        (hazard_optype_ID == 2'b00);
-    assign reg_FD_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID & 
-        (hazard_optype_ID == 2'b00);
-    assign reg_FD_stall = (hazard_optype_ID == 2'b01) & 
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
-    assign reg_FD_flush = (hazard_optype_ID == 2'b10) & 
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));  
-    assign reg_DE_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
-        (hazard_optype_ID == 2'b00);
-    assign reg_DE_flush = (hazard_optype_ID == 2'b10) & 
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
-    assign reg_EM_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
-        (hazard_optype_ID == 2'b00);
-    assign reg_EM_flush = (hazard_optype_ID == 2'b10) & 
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
-    assign reg_MW_EN = ~Branch_ID & ~rs1use_ID & ~rs2use_ID &
-        (hazard_optype_ID == 2'b00);
-    assign forward_ctrl_ls = (hazard_optype_ID == 2'b01) & 
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID));
-    assign forward_ctrl_A = (hazard_optype_ID == 2'b01) &
-        (rd_EXE == rs1_ID);
-    assign forward_ctrl_B = (hazard_optype_ID == 2'b01) &
-        (rd_EXE == rs2_ID);
+    //according to the diagram, design the Hazard Detection Unit
+
+    
+
+    // hazard_optype[1:0]: 00 for no hazard, 01 for data, 10 for load, 11 for store
+    reg [1:0] hazard_optype_EX;
+    reg [1:0] hazard_optype_MEM;
+    reg [1:0] hazard_optype_WB;
+    always @(posedge clk) begin
+        if (reg_DE_flush) begin // flush from ID
+            hazard_optype_EX <= 2'b00;            
+        end
+        else begin
+            hazard_optype_EX <= hazard_optype_ID; // pass from ID
+        end
+        hazard_optype_MEM <= hazard_optype_EX; // pass from EX
+        hazard_optype_WB <= hazard_optype_MEM; // pass from MEM
+    end
+
+
+    // stall 
+    wire stall = (hazard_optype_ID != 2'b11) & //ID hazard not store
+        (hazard_optype_EX == 2'b10) & //EXE hazard load
+        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID)) & //EXE write to rs1 or rs2
+        ((rs1use_ID) | (rs2use_ID)); //ID read from rs1 or rs2
+
+    wire rs1_forward_ED = (hazard_optype_EX == 2'b01) & //EXE hazard data
+        (rd_EXE == rs1_ID & rd_EXE) & //EXE write to rs1
+        (rs1use_ID); //ID read from rs1
+
+    wire rs2_forward_ED = (hazard_optype_EX == 2'b01) & //EXE hazard data
+        (rd_EXE == rs2_ID & rd_EXE) & //EXE write to rs2
+        (rs1use_ID); //ID read from rs2
+
+    wire rs1_forward_MD = (hazard_optype_MEM == 2'b01) & //MEM hazard data
+        (rd_MEM == rs1_ID & rd_MEM) & //MEM write to rs1
+        (rs1use_ID); //ID read from rs1
+
+    wire rs2_forward_MD = (hazard_optype_MEM == 2'b01) & //MEM hazard data
+        (rd_MEM == rs2_ID & rd_MEM) & //MEM write to rs2
+        (rs1use_ID); //ID read from rs2
+
+    wire rs1_forward_LS = (hazard_optype_MEM == 2'b10) & //MEM hazard load
+        (rd_MEM == rs1_ID & rd_MEM) & //MEM write to rs1
+        (rs1use_ID); //ID read from rs1
+
+    wire rs2_forward_LS = (hazard_optype_MEM == 2'b10) & //MEM hazard load
+        (rd_MEM == rs2_ID & rd_MEM) & //MEM write to rs2
+        (rs1use_ID); //ID read from rs2
+
+    assign reg_FD_flush = Branch_ID;
+    assign reg_FD_stall = stall;
+    assign reg_DE_flush = stall;
+    assign reg_EM_flush = stall;
+    assign PC_EN_IF = ~stall; // stall, no IF
+    assign reg_FD_EN = 1'b1;
+    assign reg_DE_EN = 1'b1;
+    assign reg_EM_EN = 1'b1;
+    assign reg_MW_EN = 1'b1;
+    assign forward_ctrl_A = {2{rs1_forward_ED}} & 2'b01 |
+                            {2{rs1_forward_MD}} & 2'b10 |
+                            {2{rs1_forward_LS}} & 2'b11 ;
+    assign forward_ctrl_B = {2{rs2_forward_ED}} & 2'b01 |
+                            {2{rs2_forward_MD}} & 2'b10 |
+                            {2{rs2_forward_LS}} & 2'b11 ;
+    assign forward_ctrl_ls = rs2_EXE & rd_MEM & hazard_optype_EX == 2'b11 & hazard_optype_MEM == 2'b10;
+
 
 endmodule
