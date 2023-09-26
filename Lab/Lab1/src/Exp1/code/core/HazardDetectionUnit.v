@@ -69,12 +69,12 @@ module HazardDetectionUnit(
     assign reg_DE_EN = 1'b1;
     assign reg_EM_EN = 1'b1;
     assign reg_MW_EN = 1'b1;
-    assign forward_ctrl_A = {2{rs1_forward_ED}} & 2'b01 |
-                            {2{rs1_forward_MD}} & 2'b10 |
-                            {2{rs1_forward_LS}} & 2'b11 ;
-    assign forward_ctrl_B = {2{rs2_forward_ED}} & 2'b01 |
-                            {2{rs2_forward_MD}} & 2'b10 |
-                            {2{rs2_forward_LS}} & 2'b11 ;
+    assign forward_ctrl_A = ({2{rs1_forward_ED}} & 2'b01) |
+                            ({2{rs1_forward_MD}} & 2'b10) |
+                            ({2{rs1_forward_LS}} & 2'b11) ;
+    assign forward_ctrl_B = ({2{rs2_forward_ED}} & 2'b01) |
+                            ({2{rs2_forward_MD}} & 2'b10) |
+                            ({2{rs2_forward_LS}} & 2'b11) ;
     assign forward_ctrl_ls = rs2_EXE & rd_MEM & hazard_optype_EX == 2'b11 & hazard_optype_MEM == 2'b10;
 
 
