@@ -66,11 +66,11 @@ module CtrlUnit(
     wire BLTU = Bop & funct3_6;                           //to fill sth. in 
     wire BGEU = Bop & funct3_7;                           //to fill sth. in 
 
-    wire LB = Iop & funct3_0;                            //to fill sth. in 
-    wire LH = Iop & funct3_1;                            //to fill sth. in 
-    wire LW = Iop & funct3_2;                            //to fill sth. in 
-    wire LBU = Iop & funct3_4;                            //to fill sth. in 
-    wire LHU = Iop & funct3_5;                            //to fill sth. in 
+    wire LB = Lop & funct3_0;                            //to fill sth. in 
+    wire LH = Lop & funct3_1;                            //to fill sth. in 
+    wire LW = Lop & funct3_2;                            //to fill sth. in 
+    wire LBU = Lop & funct3_4;                            //to fill sth. in 
+    wire LHU = Lop & funct3_5;                            //to fill sth. in 
 
     wire SB = Sop & funct3_0;                             //to fill sth. in 
     wire SH = Sop & funct3_1;                             //to fill sth. in 
@@ -88,7 +88,7 @@ module CtrlUnit(
     wire L_valid = LW | LH | LB | LHU | LBU;
     wire S_valid = SW | SH | SB;
 
-    assign Branch = B_valid | JAL | JALR & cmp_res;                       //to fill sth. in 
+    assign Branch = (B_valid | JAL | JALR) & cmp_res;                       //to fill sth. in 
 
     parameter Imm_type_I = 3'b001;
     parameter Imm_type_B = 3'b010;
@@ -109,8 +109,7 @@ module CtrlUnit(
     parameter cmp_GE  = 3'b101;
     parameter cmp_GEU = 3'b110;
                        
-    assign cmp_ctrl = 
-        {3{BEQ}} & cmp_EQ  |
+    assign cmp_ctrl = {3{BEQ}} & cmp_EQ  |
         {3{BNE}} & cmp_NE  |
         {3{BLT}} & cmp_LT  |
         {3{BLTU}} & cmp_LTU |

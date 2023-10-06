@@ -33,8 +33,7 @@ module HazardDetectionUnit(
     // stall 
     wire stall = (hazard_optype_ID != 2'b11) & //ID hazard not store
         (hazard_optype_EX == 2'b10) & //EXE hazard load
-        ((rd_EXE == rs1_ID) | (rd_EXE == rs2_ID)) & //EXE write to rs1 or rs2
-        ((rs1use_ID) | (rs2use_ID)); //ID read from rs1 or rs2
+        (((rd_EXE == rs1_ID) & rs1use_ID) | ((rd_EXE == rs2_ID) & rs2use_ID)); //EXE write to the same reg
 
     wire rs1_forward_ED = (hazard_optype_EX == 2'b01) & //EXE hazard data
         (rd_EXE == rs1_ID & rd_EXE) & //EXE write to rs1
@@ -76,6 +75,5 @@ module HazardDetectionUnit(
                             ({2{rs2_forward_MD}} & 2'b10) |
                             ({2{rs2_forward_LS}} & 2'b11) ;
     assign forward_ctrl_ls = rs2_EXE & rd_MEM & hazard_optype_EX == 2'b11 & hazard_optype_MEM == 2'b10;
-
 
 endmodule
