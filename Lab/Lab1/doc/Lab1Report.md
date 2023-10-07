@@ -36,16 +36,19 @@
 
 ### Hazard Solution
 1. 无法规避的Stall
-+ 需要stall的情况比较少，仅在前一指令为`Load`指令时才会发生。
++ 必须要stall的情况比较少，仅在前一指令为`Load`指令时才会发生。(`store`虽然也访存，但是寄存器的值是已经存在的)
 + 假设Load指令正在从内存中向寄存器`r_n`读取数据（**WB**），而下一指令又要取用`r_n`（**ID**），即`Load`跟着`R type`, `I type`, `JAL`, `JALR`, `AUPIC`, `LUI`, `B type`这些需要在ID阶段读取**同一寄存器值**的指令时，无法避免的需要一个`stall`，因此可以通过检测前一指令是否为`L type`来规避可能发生的`data hazard`, 进而能将前一指令`MEM`阶段读取到的寄存器值`forward`到当前指令的`EX`阶段
 2. 直接Forward
 + 这种情况也需要分为两类
 	1. 前一条为`L type`下一条为`S type`，此种情况在两个指令的`MEM`阶段进行`forward`
-	2. 非`L type`与`S type` 指令，寄存器占用导致的forward
+	2. 非`L type`与`S type` 指令，寄存器占用导致的forward，寄存器值可以从上上个MEM阶段到当前EX阶段，也可以从上一个EX阶段到当前EX阶段
 3. Control Hazard
-	1. 对于跳转指令，采取Predict Not Taken策略，即对于即将发生的跳转指令，默认其不执行跳转，先继续执行，如果发现判断出的信号正确，则进行flush，将执行过的内容覆盖？
+	1. 对于跳转指令，采取Predict Not Taken策略，即对于即将发生的跳转指令，默认其不执行跳转，先继续执行，如果发现判断出的信号正确，则进行flush，将正在进行的取指全部清空。
+	> 因为branch指令在ID阶段就能得知当前信号是否正确，而下一条指令此时刚刚取指，可以通过flush将错误执行的指令停止
 
 ### Predict-not-taken
++ 见上
+
 ### Forward Types
 1. $EXE\rightarrow next\ EXE$
 2. $MEM\rightarrow next\ 2\ EXE$
@@ -90,8 +93,8 @@
 ```
 + ALU source detection
 ```Verilog
-assign ALUSrc_A = (!AUPICop); // 0 for AUPIC, 1 for Others
-assign ALUSrc_B = !(R_valid | S_valid | B_valid); // 1 for imm, 0 for rs2
+assign ALUSrc_A = JAL | JALR | AUIPC; 
+assign ALUSrc_B = I_valid | L_valid | S_valid | LUI | AUIPC; 
 ```
 + register used detection signal
 ```Verilog

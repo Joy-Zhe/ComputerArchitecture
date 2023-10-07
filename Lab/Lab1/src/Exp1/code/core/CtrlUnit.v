@@ -116,9 +116,9 @@ module CtrlUnit(
         {3{BGE}} & cmp_GE  |
         {3{BGEU}} & cmp_GEU ;       //to fill sth. in 
 
-    assign ALUSrc_A = (!AUPICop); // 0 for AUPIC, 1 for Others                         //to fill sth. in 
+    assign ALUSrc_A = JAL | JALR | AUIPC;                          //to fill sth. in 
 
-    assign ALUSrc_B = !(R_valid | S_valid | B_valid); // 1 for imm, 0 for rs2                        //to fill sth. in 
+    assign ALUSrc_B = I_valid | L_valid | S_valid | LUI | AUIPC;                         //to fill sth. in 
 
     parameter ALU_ADD  = 4'b0001;
     parameter ALU_SUB  = 4'b0010;
