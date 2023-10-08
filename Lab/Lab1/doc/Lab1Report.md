@@ -89,7 +89,7 @@
 + branch signal
 > the operation which need jump and compare
 ``` Verilog
-    assign Branch = (B_valid | JAL | JALR) & cmp_res;
+assign Branch = (B_valid & cmp_res) | JAL | JALR;
 ```
 + ALU source detection
 ```Verilog
@@ -117,6 +117,14 @@ wire stall = (hazard_optype_ID != 2'b11) & //ID hazard not store
         (((rd_EXE == rs1_ID) & rs1use_ID) | ((rd_EXE == rs2_ID) & rs2use_ID)); 
         //EXE write to the same reg
 ```
++ Mem to EX forward
+```Verilog
+
+```
++ EX to EX forward
+```Verilog
+
+```
 + LS forward
 > Load operation to store operation
 ``` Verilog
@@ -126,8 +134,12 @@ wire rs1_forward_LS = (hazard_optype_MEM == 2'b10) & //MEM hazard load
 
 wire rs2_forward_LS = (hazard_optype_MEM == 2'b10) & //MEM hazard load
         (rd_MEM == rs2_ID & rd_MEM) & //MEM write to rs2
-        (rs1use_ID); //ID read from rs2
+        (rs2use_ID); //ID read from rs2
 ```
 
 3. **cmp_32**
++ 此模块用于Branch的ID阶段的判断，传入比较种类和两个寄存器的值，如果比较结果正确，返回1，否则返回0.
 
+``` Verilog
+
+```

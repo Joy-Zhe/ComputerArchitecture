@@ -32,34 +32,35 @@ module HazardDetectionUnit(
         hazard_optype_WB <= hazard_optype_MEM; // pass from MEM
     end
    
+
     // stall 
-    wire stall = (hazard_optype_ID != 2'b11) & //ID hazard not store
-        (hazard_optype_EX == 2'b10) & rd_EXE & //EXE hazard load(the former instruction is L type)
-        (((rd_EXE == rs1_ID) & rs1use_ID) | ((rd_EXE == rs2_ID) & rs2use_ID)); //EXE write to the same reg
+    wire stall = (hazard_optype_ID != 2'b11) && //ID hazard not store
+        (hazard_optype_EX == 2'b10) && rd_EXE && //EXE hazard load(the former instruction is L type)
+        (((rd_EXE == rs1_ID) && rs1use_ID) || ((rd_EXE == rs2_ID) && rs2use_ID));
 
-    wire rs1_forward_ED = (hazard_optype_EX == 2'b01) & //EXE hazard data
-        (rd_EXE == rs1_ID & rd_EXE) & //EXE write to rs1
+    wire rs1_forward_ED = (hazard_optype_EX == 2'b01) && //EXE hazard data
+        (rd_EXE == rs1_ID && rd_EXE) && //EXE write to rs1
         (rs1use_ID); //ID read from rs1
 
-    wire rs2_forward_ED = (hazard_optype_EX == 2'b01) & //EXE hazard data
-        (rd_EXE == rs2_ID & rd_EXE) & //EXE write to rs2
-        (rs1use_ID); //ID read from rs2
+    wire rs2_forward_ED = (hazard_optype_EX == 2'b01) && //EXE hazard data
+        (rd_EXE == rs2_ID && rd_EXE) && //EXE write to rs2
+        (rs2use_ID); //ID read from rs2
 
-    wire rs1_forward_MD = (hazard_optype_MEM == 2'b01) & //MEM hazard data
-        (rd_MEM == rs1_ID & rd_MEM) & //MEM write to rs1
+    wire rs1_forward_MD = (hazard_optype_MEM == 2'b01) && //MEM hazard data
+        (rd_MEM == rs1_ID && rd_MEM) && //MEM write to rs1
         (rs1use_ID); //ID read from rs1
 
-    wire rs2_forward_MD = (hazard_optype_MEM == 2'b01) & //MEM hazard data
-        (rd_MEM == rs2_ID & rd_MEM) & //MEM write to rs2
-        (rs1use_ID); //ID read from rs2
+    wire rs2_forward_MD = (hazard_optype_MEM == 2'b01) && //MEM hazard data
+        (rd_MEM == rs2_ID && rd_MEM) && //MEM write to rs2
+        (rs2use_ID); //ID read from rs2
 
-    wire rs1_forward_LD = (hazard_optype_MEM == 2'b10) & //MEM hazard load
-        (rd_MEM == rs1_ID & rd_MEM) & //MEM write to rs1
+    wire rs1_forward_LD = (hazard_optype_MEM == 2'b10) && //MEM hazard load
+        (rd_MEM == rs1_ID && rd_MEM) && //MEM write to rs1
         (rs1use_ID); //ID read from rs1
 
-    wire rs2_forward_LD = (hazard_optype_MEM == 2'b10) & //MEM hazard load
-        (rd_MEM == rs2_ID & rd_MEM) & //MEM write to rs2
-        (rs1use_ID); //ID read from rs2
+    wire rs2_forward_LD = (hazard_optype_MEM == 2'b10) && //MEM hazard load
+        (rd_MEM == rs2_ID && rd_MEM) && //MEM write to rs2
+        (rs2use_ID); //ID read from rs2
 
     // predict not taken
     assign reg_FD_flush = Branch_ID; // branch correct, flush the content in IF/ID
@@ -75,6 +76,6 @@ module HazardDetectionUnit(
     assign forward_ctrl_B = ({2{rs2_forward_ED}} & 2'b01) |
                             ({2{rs2_forward_MD}} & 2'b10) |
                             ({2{rs2_forward_LD}} & 2'b11) ;
-    assign forward_ctrl_ls = rs2_EXE & rd_MEM & hazard_optype_EX == 2'b11 & hazard_optype_MEM == 2'b10;
+    assign forward_ctrl_ls = (rs2_EXE == rd_MEM) && rd_MEM && (hazard_optype_EX == 2'b11) && (hazard_optype_MEM == 2'b10);
 
 endmodule
