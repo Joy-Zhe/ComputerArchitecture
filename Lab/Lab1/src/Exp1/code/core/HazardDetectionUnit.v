@@ -39,27 +39,27 @@ module HazardDetectionUnit(
         (((rd_EXE == rs1_ID) && rs1use_ID) || ((rd_EXE == rs2_ID) && rs2use_ID));
 
     wire rs1_forward_ED = (hazard_optype_EX == 2'b01) && //EXE hazard data
-        (rd_EXE == rs1_ID && rd_EXE) && //EXE write to rs1
+        ((rd_EXE == rs1_ID) && rd_EXE) && //EXE write to rs1
         (rs1use_ID); //ID read from rs1
 
     wire rs2_forward_ED = (hazard_optype_EX == 2'b01) && //EXE hazard data
-        (rd_EXE == rs2_ID && rd_EXE) && //EXE write to rs2
+        ((rd_EXE == rs2_ID) && rd_EXE) && //EXE write to rs2
         (rs2use_ID); //ID read from rs2
 
     wire rs1_forward_MD = (hazard_optype_MEM == 2'b01) && //MEM hazard data
-        (rd_MEM == rs1_ID && rd_MEM) && //MEM write to rs1
+        ((rd_MEM == rs1_ID) && rd_MEM) && //MEM write to rs1
         (rs1use_ID); //ID read from rs1
 
     wire rs2_forward_MD = (hazard_optype_MEM == 2'b01) && //MEM hazard data
-        (rd_MEM == rs2_ID && rd_MEM) && //MEM write to rs2
+        ((rd_MEM == rs2_ID) && rd_MEM) && //MEM write to rs2
         (rs2use_ID); //ID read from rs2
 
     wire rs1_forward_LD = (hazard_optype_MEM == 2'b10) && //MEM hazard load
-        (rd_MEM == rs1_ID && rd_MEM) && //MEM write to rs1
+        ((rd_MEM == rs1_ID) && rd_MEM) && //MEM write to rs1
         (rs1use_ID); //ID read from rs1
 
     wire rs2_forward_LD = (hazard_optype_MEM == 2'b10) && //MEM hazard load
-        (rd_MEM == rs2_ID && rd_MEM) && //MEM write to rs2
+        ((rd_MEM == rs2_ID) && rd_MEM) && //MEM write to rs2
         (rs2use_ID); //ID read from rs2
 
     // predict not taken
@@ -70,12 +70,12 @@ module HazardDetectionUnit(
     assign reg_DE_flush = stall; // stall, flush the content in ID/EX
     assign PC_EN_IF = ~stall; // stall, no IF
     
-    assign forward_ctrl_A = ({2{rs1_forward_ED}} & 2'b01) |
-                            ({2{rs1_forward_MD}} & 2'b10) |
-                            ({2{rs1_forward_LD}} & 2'b11) ;
-    assign forward_ctrl_B = ({2{rs2_forward_ED}} & 2'b01) |
-                            ({2{rs2_forward_MD}} & 2'b10) |
-                            ({2{rs2_forward_LD}} & 2'b11) ;
+    assign forward_ctrl_A = rs1_forward_ED ? 2'b01 :
+                            (rs1_forward_MD ? 2'b10 :
+                            (rs1_forward_LD ? 2'b11 : 2'b00));
+    assign forward_ctrl_B = rs2_forward_ED ? 2'b01 :
+                            (rs2_forward_MD ? 2'b10 :
+                            (rs2_forward_LD ? 2'b11 : 2'b00));
     assign forward_ctrl_ls = (rs2_EXE == rd_MEM) && rd_MEM && (hazard_optype_EX == 2'b11) && (hazard_optype_MEM == 2'b10);
 
 endmodule
