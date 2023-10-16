@@ -26,7 +26,7 @@ module ExceptionUnit(
     output reg_FD_flush, reg_DE_flush, reg_EM_flush, reg_MW_flush, 
     output RegWrite_cancel
 );
-
+    // 3 cycles write, record states
     reg[11:0] csr_raddr, csr_waddr;
     reg[31:0] csr_wdata;
     reg csr_w;
@@ -40,9 +40,14 @@ module ExceptionUnit(
     //According to the diagram, design the Exception Unit
     
     
-    
-    assign PC_redirect = 0;
-    assign redirect_mux = 0;
+    // judge if redirect PC
+    assign redirect_mux = interrupt | illegal_inst | l_access_fault | s_access_fault | ecall_m | mret;
+    assign PC_redirect = interrupt ? 32'h00000004 : 
+                          illegal_inst ? 32'h00000002 : 
+                          l_access_fault ? 32'h00000005 : 
+                          s_access_fault ? 32'h00000007 : 
+                          ecall_m ? 32'h00000008 : 
+                          mret ? epc_cur : 32'h00000000; // interrupt vector
     assign RegWrite_cancel = 0;
     assign reg_FD_flush = 0;
     assign reg_DE_flush = 0;
