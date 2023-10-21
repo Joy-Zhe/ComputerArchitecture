@@ -16,6 +16,7 @@ module HazardDetectionUnit(
     assign reg_DE_EN = 1'b1;
     assign reg_EM_EN = 1'b1;
     assign reg_MW_EN = 1'b1;
+    assign reg_EM_flush = 1'b0;
 
     // // hazard_optype[1:0]: 00 for no hazard, 01 for data, 10 for load, 11 for store
     reg [1:0] hazard_optype_EX;
