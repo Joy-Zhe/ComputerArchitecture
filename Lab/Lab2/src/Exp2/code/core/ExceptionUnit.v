@@ -59,16 +59,22 @@ module ExceptionUnit(
     parameter STATE2 = 3'b010;
     parameter STATE3 = 3'b011;
     parameter STATE4 = 3'b100;
+    parameter STATE5 = 3'b101;
+    parameter STATE6 = 3'b110;
     parameter MEPC_addr = 12'h341;    // m mode, address of mepc
     parameter MCAUSE_addr = 12'h342;  // m mode, address of mcause
     parameter MTVAL_addr = 12'h343;   // m mode, address of mtval
     parameter MSTATUS_addr = 12'h300; // m mode, address of mstatus
     parameter MTVEC_addr = 12'h305;   // m mode, address of mtvec
+    parameter MIE_addr = 12'h304;     // m mode, address of mie
+    parameter MIP_addr = 12'h344;     // m mode, address of mip
 
     wire NO_INT = (state == STATE0);
     wire STATE_MEPC = (state == STATE1);
     wire STATE_MCAUSE = (state == STATE2);
     wire STATE_MRET = (state == STATE3);
+    wire STATE_MIE = (state == STATE6);
+    wire STATE_MIP = (state == STATE5);
     wire INT_CACHE = (state == STATE4);
 
     reg [31:0] EPC;
@@ -116,8 +122,17 @@ module ExceptionUnit(
         else if(STATE_MEPC) begin
             state <= STATE2; // STATE1 -> STATE2
         end
-        else if(STATE_MCAUSE) begin // STATE2 -> STATE0
-            state <= STATE0;
+        // else if(STATE_MCAUSE) begin // STATE2 -> STATE0
+        //     state <= STATE0;
+        // end
+        else if(STATE_MCAUSE) begin
+            state <= STATE5; // STATE2 -> STATE5, in handler, continue wirte mie
+        end
+        else if(STATE_MIP) begin
+            state <= STATE6; // STATE5 -> STATE6, in handler, continue wirte mip
+        end
+        else if(STATE_MIE) begin
+            state <= STATE0; // STATE6 -> STATE0, wait for MRET
         end
         else if(STATE_MRET) begin // STATE3 -> STATE0
             state <= STATE0;
@@ -217,6 +232,30 @@ module ExceptionUnit(
             csr_wsc <= 2'b00;
             csr_waddr <= MSTATUS_addr;
             csr_wdata <= {mstatus[31:8], 1'b1, mstatus[6:4], mstatus[7], mstatus[2:0]};
+        end
+        else if (STATE_MIE) begin
+            csr_w <= 1'b1;
+            csr_wsc <= 2'b00;
+            csr_waddr <= MIE_addr;
+            // if (is_interrupt) begin // MEIE <= 1
+            //     csr_wdata <= 1 << 8;                 
+            // end
+            // else if (is_exception) begin // MSIE <= 1
+            //     csr_wdata <= 1 << 3;
+            // end
+            csr_wdata <= 32'hfff; // MEIE, MTIE, MSIE
+        end
+        else if (STATE_MIP) begin
+            csr_w <= 1'b1;
+            csr_wsc <= 2'b00;
+            csr_waddr <= MIP_addr;
+            // if (is_interrupt) begin // MEIP <= 1
+            //     csr_wdata <= 1 << 8;
+            // end
+            // else if (is_exception) begin // MSIP <= 1
+            //     csr_wdata <= 1 << 3;
+            // end
+            csr_wdata <= 32'hfff; // MEIP, MTIP, MSIP
         end
     end
 
