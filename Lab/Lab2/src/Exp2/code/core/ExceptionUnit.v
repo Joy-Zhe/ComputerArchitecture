@@ -35,7 +35,7 @@ module ExceptionUnit(
     wire[31:0] mstatus; // mstatus register
 
     // input: clk, rst, raddr, waddr, wdata, csr_w, csr_wsc_mode
-    // output: rdata, mstatus
+    // output: rdata, mstatus, mepc, mtvec
     CSRRegs csr(
         .clk(clk),
         .rst(rst),
@@ -46,13 +46,17 @@ module ExceptionUnit(
         .csr_wsc_mode(csr_wsc),
 
         .rdata(csr_r_data_out),
-        .mstatus(mstatus)
+        .mstatus(mstatus),
+        // add mtvec and mepc read
+        .mtvec(mtvec),
+        .mepc(mepc)
         );
 
     //According to the diagram, design the Exception Unit
     reg [2:0] state;
     reg [31:0] mcause; // mcause value
-    reg [31:0] mepc; // mepc value
+    wire [31:0] mepc; // mepc value
+    wire [31:0] mtvec; // mtval value
 
     parameter STATE0 = 3'b000;
     parameter STATE1 = 3'b001;
@@ -66,15 +70,10 @@ module ExceptionUnit(
     parameter MTVAL_addr = 12'h343;   // m mode, address of mtval
     parameter MSTATUS_addr = 12'h300; // m mode, address of mstatus
     parameter MTVEC_addr = 12'h305;   // m mode, address of mtvec
-    parameter MIE_addr = 12'h304;     // m mode, address of mie
-    parameter MIP_addr = 12'h344;     // m mode, address of mip
 
-    wire NO_INT = (state == STATE0);
-    wire STATE_MEPC = (state == STATE1);
+    wire STATE_IDLE = (state == STATE0);
+    wire STATE_MSTATUS = (state == STATE1);
     wire STATE_MCAUSE = (state == STATE2);
-    wire STATE_MRET = (state == STATE3);
-    wire STATE_MIE = (state == STATE6);
-    wire STATE_MIP = (state == STATE5);
     wire INT_CACHE = (state == STATE4);
 
     reg [31:0] EPC;
@@ -113,32 +112,26 @@ module ExceptionUnit(
         if (rst) begin // reset
             state <= STATE0;
         end
-        else if(is_exception && NO_INT) begin // start exception
+        else if(is_exception && STATE_IDLE) begin // start exception
             state <= STATE1;
         end
-        else if(is_interrupt && NO_INT) begin // start interrupt
-            state <= STATE4; 
+        else if(is_interrupt && STATE_IDLE) begin // start interrupt
+            state <= STATE1; 
         end
-        else if(STATE_MEPC) begin
+        // else if(mret && STATE_IDLE) begin // start mret
+        //     state <= STATE3; // STATE0 -> STATE3
+        // end
+        else if(STATE_MSTATUS) begin
             state <= STATE2; // STATE1 -> STATE2
         end
         // else if(STATE_MCAUSE) begin // STATE2 -> STATE0
         //     state <= STATE0;
         // end
         else if(STATE_MCAUSE) begin
-            state <= STATE5; // STATE2 -> STATE5, in handler, continue wirte mie
-        end
-        else if(STATE_MIP) begin
-            state <= STATE6; // STATE5 -> STATE6, in handler, continue wirte mip
-        end
-        else if(STATE_MIE) begin
-            state <= STATE0; // STATE6 -> STATE0, wait for MRET
-        end
-        else if(STATE_MRET) begin // STATE3 -> STATE0
             state <= STATE0;
         end
-        else if(INT_CACHE) begin // STATE4 -> STATE0
-            state <= STATE0;
+        else if(INT_CACHE) begin // STATE4 -> STATE2
+            state <= STATE2;
         end
     end
     //state machine execution
@@ -150,11 +143,10 @@ module ExceptionUnit(
         saved_reg_EM_flush <= 1'b0;
         saved_reg_MW_flush <= 1'b0;
         saved_RegWrite_cancel <= 1'b0;
-        saved_PC_redirect <= 32'b0;
-        csr_raddr <= 12'b0;
-
-        csr_w <= csr_rw_in;
+        saved_PC_redirect <= csr_r_data_out;
+        EPC <= epc_next;
         csr_raddr <= csr_rw_addr_in;
+        csr_w <= csr_rw_in;
         csr_waddr <= csr_rw_addr_in;
 
         if(csr_w_imm_mux) begin
@@ -166,39 +158,48 @@ module ExceptionUnit(
 
         csr_wsc <= csr_wsc_mode_in;
         // 
-        if (NO_INT) begin
+        if (STATE_IDLE) begin
             if (is_exception) begin // exception, save PC, write MSTATUS, read MTVEC
                 csr_w <= 1'b1;
                 csr_wsc <= 2'b00;
-                csr_raddr <= MTVEC_addr;
-                csr_waddr <= MSTATUS_addr;
-                csr_wdata <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
-                EPC <= epc_cur;
+                csr_waddr <= MEPC_addr;
+                csr_wdata <= EPC;
+
+                saved_PC_redirect <= mtvec; // jump to MTVEC
+                saved_redirect_mux <= 1'b1;
+                
                 saved_reg_FD_flush <= 1'b1;
                 saved_reg_DE_flush <= 1'b1;
                 saved_reg_EM_flush <= 1'b1;
                 saved_reg_MW_flush <= 1'b1;
                 saved_RegWrite_cancel <= 1'b1;
             end
-            else if (is_interrupt) begin // interrupt, save PC + 4, write MSTATUS, read MTVEC
+            else if (is_interrupt) begin
                 csr_w <= 1'b1;
                 csr_wsc <= 2'b00;
-                csr_raddr <= MTVEC_addr;
-                csr_waddr <= MSTATUS_addr;
-                csr_wdata <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
-                EPC <= epc_next;
+                // csr_waddr <= MSTATUS_addr;
+                // csr_wdata <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
+                csr_waddr <= MEPC_addr;
+                csr_wdata <= EPC;
+
+                saved_PC_redirect <= mtvec; // jump to MTVEC
+                saved_redirect_mux <= 1'b1;
+
                 saved_reg_FD_flush <= 1'b1;
                 saved_reg_DE_flush <= 1'b1;
                 saved_reg_EM_flush <= 1'b1;
                 saved_reg_MW_flush <= 1'b1;
                 saved_RegWrite_cancel <= 1'b1;
-            end 
+            end
             else if (mret) begin // mret, write MSTATUS, PC <= MEPC
                 csr_w <= 1'b1;
                 csr_wsc <= 2'b00;
-                csr_raddr <= MEPC_addr;
-                saved_PC_redirect <= csr_r_data_out;
+                csr_waddr <= MSTATUS_addr;
+                csr_wdata <= {mstatus[31:8], 1'b1, mstatus[6:4], mstatus[7], mstatus[2:0]};
+
+                saved_PC_redirect <= mepc;
                 saved_redirect_mux <= 1'b1;
+
                 saved_reg_FD_flush <= 1'b1;
                 saved_reg_DE_flush <= 1'b1;
                 saved_reg_EM_flush <= 1'b1;
@@ -206,20 +207,12 @@ module ExceptionUnit(
                 saved_RegWrite_cancel <= 1'b1;
             end
         end
-        else if (STATE_MEPC) begin
+        else if (STATE_MSTATUS) begin
             csr_w <= 1'b1;
             csr_wsc <= 2'b00;
-            csr_raddr <= MTVEC_addr;
-            csr_waddr <= MEPC_addr;
-            csr_wdata <= EPC;
-            saved_PC_redirect <= csr_r_data_out; // jump to MTVEC
-            saved_redirect_mux <= 1'b1;
-            // flush pipeline
-            saved_reg_FD_flush <= 1'b1;
-            saved_reg_DE_flush <= 1'b1;
-            saved_reg_EM_flush <= 1'b1;
-            saved_reg_MW_flush <= 1'b1;
-            saved_RegWrite_cancel <= 1'b1;
+            csr_raddr <= csr_rw_addr_in;
+            csr_waddr <= MSTATUS_addr;
+            csr_wdata <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
         end
         else if (STATE_MCAUSE) begin
             csr_w <= 1'b1;
@@ -227,42 +220,24 @@ module ExceptionUnit(
             csr_waddr <= MCAUSE_addr;
             csr_wdata <= mcause;
         end
-        else if (STATE_MRET) begin
+        else if (INT_CACHE) begin
             csr_w <= 1'b1;
             csr_wsc <= 2'b00;
             csr_waddr <= MSTATUS_addr;
-            csr_wdata <= {mstatus[31:8], 1'b1, mstatus[6:4], mstatus[7], mstatus[2:0]};
-        end
-        else if (STATE_MIE) begin
-            csr_w <= 1'b1;
-            csr_wsc <= 2'b00;
-            csr_waddr <= MIE_addr;
-            // if (is_interrupt) begin // MEIE <= 1
-            //     csr_wdata <= 1 << 8;                 
-            // end
-            // else if (is_exception) begin // MSIE <= 1
-            //     csr_wdata <= 1 << 3;
-            // end
-            csr_wdata <= 32'hfff; // MEIE, MTIE, MSIE
-        end
-        else if (STATE_MIP) begin
-            csr_w <= 1'b1;
-            csr_wsc <= 2'b00;
-            csr_waddr <= MIP_addr;
-            // if (is_interrupt) begin // MEIP <= 1
-            //     csr_wdata <= 1 << 8;
-            // end
-            // else if (is_exception) begin // MSIP <= 1
-            //     csr_wdata <= 1 << 3;
-            // end
-            csr_wdata <= 32'hfff; // MEIP, MTIP, MSIP
+            csr_wdata <= {mstatus[31:8], mstatus[3], mstatus[6:4], 1'b0, mstatus[2:0]};
+            EPC <= epc_next;
+            saved_reg_FD_flush <= 1'b1;
+            saved_reg_DE_flush <= 1'b1;
+            saved_reg_EM_flush <= 1'b1;
+            saved_reg_MW_flush <= 1'b1;
+            saved_RegWrite_cancel <= 1'b1;
         end
     end
 
     // judge if redirect PC
-    assign redirect_mux = saved_redirect_mux; // if interrupt, redirect mux to PC_redirect
-    assign PC_redirect = saved_PC_redirect; // redirect PC
-    assign RegWrite_cancel = saved_RegWrite_cancel; // cancel RegWrite
+    assign redirect_mux = saved_redirect_mux; 
+    assign PC_redirect = saved_PC_redirect; 
+    assign RegWrite_cancel = saved_RegWrite_cancel; 
     assign reg_FD_flush = saved_reg_FD_flush;
     assign reg_DE_flush = saved_reg_DE_flush;
     assign reg_EM_flush = saved_reg_EM_flush;

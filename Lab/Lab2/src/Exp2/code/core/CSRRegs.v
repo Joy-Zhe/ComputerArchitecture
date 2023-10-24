@@ -7,7 +7,10 @@ module CSRRegs(
     input csr_w,
     input[1:0] csr_wsc_mode,
     output[31:0] rdata,
-    output[31:0] mstatus
+    output[31:0] mstatus,
+    // add mepc and mtvec read
+    output[31:0] mepc,
+    output[31:0] mtvec
 );
 
     reg[31:0] CSR [0:15];
@@ -19,6 +22,8 @@ module CSRRegs(
     wire[3:0] waddr_map = (waddr[6] << 3) + waddr[2:0];
 
     assign mstatus = CSR[0];
+    assign mepc = CSR[9];
+    assign mtvec = CSR[5];
 
     assign rdata = CSR[raddr_map];
 
