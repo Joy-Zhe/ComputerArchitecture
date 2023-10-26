@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="184.880 ns"></ZoomStartTime>
-      <ZoomEndTime time="202.336 ns"></ZoomEndTime>
-      <Cursor1Time time="189.525 ns"></Cursor1Time>
+      <ZoomStartTime time="237.600 ns"></ZoomStartTime>
+      <ZoomEndTime time="252.901 ns"></ZoomEndTime>
+      <Cursor1Time time="247.500 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="210"></NameColumnWidth>
-      <ValueColumnWidth column_width="72"></ValueColumnWidth>
+      <NameColumnWidth column_width="208"></NameColumnWidth>
+      <ValueColumnWidth column_width="58"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="34" />
+   <WVObjectSize size="37" />
    <wvobject fp_name="/core_sim/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -76,6 +76,10 @@
       <obj_property name="ElementShortName">is_exception</obj_property>
       <obj_property name="ObjectShortName">is_exception</obj_property>
    </wvobject>
+   <wvobject fp_name="/core_sim/core/exp_unit/later_INT" type="logic">
+      <obj_property name="ElementShortName">later_INT</obj_property>
+      <obj_property name="ObjectShortName">later_INT</obj_property>
+   </wvobject>
    <wvobject fp_name="/core_sim/core/exp_unit/is_interrupt" type="logic">
       <obj_property name="ElementShortName">is_interrupt</obj_property>
       <obj_property name="ObjectShortName">is_interrupt</obj_property>
@@ -100,6 +104,10 @@
       <obj_property name="ElementShortName">EPC[31:0]</obj_property>
       <obj_property name="ObjectShortName">EPC[31:0]</obj_property>
    </wvobject>
+   <wvobject fp_name="/core_sim/core/exp_unit/INT_EPC" type="array">
+      <obj_property name="ElementShortName">INT_EPC[31:0]</obj_property>
+      <obj_property name="ObjectShortName">INT_EPC[31:0]</obj_property>
+   </wvobject>
    <wvobject fp_name="/core_sim/core/exp_unit/state" type="array">
       <obj_property name="ElementShortName">state[2:0]</obj_property>
       <obj_property name="ObjectShortName">state[2:0]</obj_property>
@@ -119,6 +127,10 @@
    <wvobject fp_name="/core_sim/core/exp_unit/csr_waddr" type="array">
       <obj_property name="ElementShortName">csr_waddr[11:0]</obj_property>
       <obj_property name="ObjectShortName">csr_waddr[11:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/exp_unit/mcause" type="array">
+      <obj_property name="ElementShortName">mcause[31:0]</obj_property>
+      <obj_property name="ObjectShortName">mcause[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/exp_unit/csr_wdata" type="array">
       <obj_property name="ElementShortName">csr_wdata[31:0]</obj_property>
@@ -147,6 +159,7 @@
    <wvobject fp_name="/core_sim/core/exp_unit/csr/CSR" type="array">
       <obj_property name="ElementShortName">CSR[0:15][31:0]</obj_property>
       <obj_property name="ObjectShortName">CSR[0:15][31:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/exp_unit/csr/raddr_map" type="array">
       <obj_property name="ElementShortName">raddr_map[3:0]</obj_property>

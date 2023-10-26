@@ -22,7 +22,11 @@ module core_sim;
         #2 rst = 0;
         // #10 test_int = 1;
         #186.5 test_int = 1;
-        #0.5 test_int = 0;
+        #0.7 test_int = 0;
+        #57.3 test_int = 1;
+        #2 test_int = 0;
+        // #186.5 test_int = 1;
+        // #0.7 test_int = 0;
     end
     always #1 clk = ~clk;
 
