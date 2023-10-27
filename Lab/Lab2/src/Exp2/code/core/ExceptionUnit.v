@@ -101,6 +101,9 @@ module ExceptionUnit(
         end
         else if (is_interrupt && !execption_delay) begin // lowest priority
             mcause <= 32'h80000000;
+        end 
+        else begin
+            mcause <= mcause;    
         end
     end
 
