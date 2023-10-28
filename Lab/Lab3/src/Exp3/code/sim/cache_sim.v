@@ -29,7 +29,7 @@ module cache_sim;
 	reg rst;
 	reg [31:0] addr;
 	reg load;
-	reg replace;
+	reg edit;
 	reg store;
 	reg invalid;
 	reg [2:0] u_b_h_w;
@@ -48,7 +48,7 @@ module cache_sim;
 		.rst(rst), 
 		.addr(addr), 
 		.load(load),
-		.replace(store), 
+		.edit(edit), 
 		.store(store), 
 		.invalid(invalid), 
 		.u_b_h_w(u_b_h_w),
@@ -76,7 +76,7 @@ module cache_sim;
 				rst <= 0;
 				addr <= 0;
 				load <= 0;
-				replace <= 0;
+				edit <= 0;
 				store <= 0;
 				invalid <= 0;
 				u_b_h_w <= 0;
@@ -86,8 +86,8 @@ module cache_sim;
 			// init
 			32'd10: begin
 				load <= 0;
-				replace <= 1;
-				store <= 0;
+				store <= 1;
+				edit <= 0;
 
 				din <= 32'h11111111;
 				addr <= 32'h00000004;
@@ -108,8 +108,8 @@ module cache_sim;
 			// read miss
 			32'd14: begin
 				load <= 1;
-				replace <= 0;
 				store <= 0;
+				edit <= 0;
 
 				u_b_h_w <= 3'b010;
 				din <= 0;
@@ -125,8 +125,8 @@ module cache_sim;
 			// write miss
 			32'd16: begin
 				load <= 0;
-				replace <= 0;
-				store <= 1;
+				store <= 0;
+				edit <= 1;
 
 				u_b_h_w <= 3'b010;
 				din <= 32'h22222222;
@@ -143,8 +143,8 @@ module cache_sim;
 			// read line 0 of set 0, set recent bit
 			32'd18: begin
 				load <= 1;
-				replace <= 0;
 				store <= 0;
+				edit <= 0;
 
 				u_b_h_w <= 3'b010;
 				din <= 0;
@@ -154,8 +154,8 @@ module cache_sim;
 			// store to line 1 of set 0 due to line 0 recent
 			32'd19: begin
 				load <= 0;
-				replace <= 1;
-				store <= 0;
+				store <= 1;
+				edit <= 0;
 
 				u_b_h_w <= 3'b010;
 				din <= 32'h33333333;
@@ -165,8 +165,8 @@ module cache_sim;
 			// edit line 1 of set 0, set dirty & recent
 			32'd20: begin
 				load <= 0;
-				replace <= 0;
-				store <= 1;
+				store <= 0;
+				edit <= 1;
 
 				u_b_h_w <= 3'b010;
 				din <= 32'h44444444;
@@ -176,8 +176,8 @@ module cache_sim;
 			// read line 0 of set 0, set recent bit
 			32'd21: begin
 				load <= 1;
-				replace <= 0;
 				store <= 0;
+				edit <= 0;
 
 				u_b_h_w <= 3'b010;
 				din <= 0;
@@ -187,8 +187,8 @@ module cache_sim;
 			// read miss, tag mismatch. output tag (of line 1), valid and dirty == 1
 			32'd22: begin
 				load <= 1;
-				replace <= 0;
 				store <= 0;
+				edit <= 0;
 				
 				u_b_h_w <= 3'b010;
 				din <= 32'h0;
@@ -198,8 +198,8 @@ module cache_sim;
 			// auto replace line 1 of set 0
 			32'd23: begin
 				load <= 0;
-				replace <= 1;
-				store <= 0;
+				store <= 1;
+				edit <= 0;
 
 				u_b_h_w <= 3'b010;
 				din <= 32'h55555555;
@@ -209,8 +209,8 @@ module cache_sim;
 			// clear
 			default: begin
 				load <= 0;
-				replace <= 0;
 				store <= 0;
+				edit <= 0;
 				din <= 0;
 				addr <= 0;
 			end
