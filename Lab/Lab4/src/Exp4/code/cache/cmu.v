@@ -90,41 +90,41 @@ module cmu (
                 S_IDLE: begin
                     if (en_r || en_w) begin
                         if (cache_hit)
-                            next_state = ??;
+                            next_state = S_IDLE;
                         else if (cache_valid && cache_dirty)
-                            next_state = ??;
+                            next_state = S_BACK;
                         else
-                            next_state = ??;
+                            next_state = S_FILL;
                     end
                     next_word_count = 2'b00;
                 end
 
                 S_BACK: begin
                     if (mem_ack_i && word_count == {ELEMENT_WORDS_WIDTH{1'b1}})    // 2'b11 in default case
-                        next_state = ??;
+                        next_state = S_FILL;
                     else
-                        next_state = ??;
+                        next_state = S_BACK;
 
                     if (mem_ack_i)
-                        next_word_count = ??;
+                        next_word_count = word_count + 2'b01;
                     else
                         next_word_count = word_count;
                 end
 
                 S_FILL: begin
                     if (mem_ack_i && word_count == {ELEMENT_WORDS_WIDTH{1'b1}})
-                        next_state = ??;
+                        next_state = S_WAIT;
                     else
-                        next_state = ??;
+                        next_state = S_FILL;
 
                     if (mem_ack_i)
-                        next_word_count = ??;
+                        next_word_count = word_count + 2'b01;
                     else
                         next_word_count = word_count;
                 end
 
                 S_WAIT: begin
-                    next_state = ??;
+                    next_state = S_IDLE;
                     next_word_count = 2'b00;
                 end
             endcase
@@ -186,6 +186,6 @@ module cmu (
     end
     assign mem_data_o = cache_dout;
 
-    assign stall = ??;
+    assign stall = (next_state != S_IDLE);
 
 endmodule
