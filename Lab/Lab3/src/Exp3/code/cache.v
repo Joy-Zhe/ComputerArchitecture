@@ -7,17 +7,22 @@ module cache (
 	input wire rst,  // reset
 	input wire [ADDR_BITS-1:0] addr,  // address
     input wire load,    //  read refreshes recent bit
-	input wire edit,  // set valid to 1 and reset dirty to 0
+	input wire replace,  // set valid to 1 and reset dirty to 0
 	input wire store,  // set dirty to 1
 	input wire invalid,  // reset valid to 0
     input wire [2:0] u_b_h_w, // select signed or not & data width
                               // please refer to definition of LB, LH, LW, LBU, LHU in RV32I Instruction Set  
 	input wire [31:0] din,  // data write in
-	output reg hit = 0,  // hit or not
-	output reg [31:0] dout = 0,  // data read out
-	output reg valid = 0,  // valid bit
-	output reg dirty = 0,  // dirty bit
-	output reg [TAG_BITS-1:0] tag = 0  // tag bits
+	// output reg hit = 0,  // hit or not
+	// output reg [31:0] dout = 0,  // data read out
+	// output reg valid = 0,  // valid bit
+	// output reg dirty = 0,  // dirty bit
+	// output reg [TAG_BITS-1:0] tag = 0  // tag bits
+    output hit,  // hit or not
+	output [31:0] dout,  // data read out
+	output valid,  // valid bit
+	output dirty,  // dirty bit
+	output [TAG_BITS-1:0] tag  // tag bits
 	);
 
     `include "addr_define.vh"
@@ -85,21 +90,41 @@ module cache (
     assign hit1 = valid1 & (tag1 == addr_tag);
     assign hit2 = valid2 & (tag2 == addr_tag);                 //need to fill in
 
+    assign valid = hit1 ? valid1 : hit2 ? valid2 : recent1 ? valid2 : recent2 ? valid1 : 0;                  //need to fill in
+    assign dirty = hit1 ? dirty1 : hit2 ? dirty2 : recent1 ? dirty2 : recent2 ? dirty1 : 0;                  //need to fill in
+    assign hit = valid && (hit1 || hit2);       //need to fill in
+    assign tag = hit1 ? tag1 : hit2 ? tag2 : recent1 ? tag2 : tag1;      
+
+    assign dout = (load && hit1) ? 
+    (u_b_h_w[1] ? word1 : 
+        (u_b_h_w[0] ? 
+            {u_b_h_w[2] ? 16'b0 : {16{half_word1[15]}}, half_word1} :
+            {u_b_h_w[2] ? 24'b0 : {24{byte1[7]}}, byte1})) :
+    (load && hit2) ? 
+    (u_b_h_w[1] ? word2 :
+        (u_b_h_w[0] ? 
+            {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
+            {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2})) : 
+    (!load) ? inner_data[ recent1 ? addr_word2 : addr_word1 ]
+        : 32'b0;
+
+    
+
     always @ (posedge clk) begin
-        valid <= recent1 ? valid2 : valid1;                  //need to fill in
-        dirty <= recent1 ? dirty2 : dirty1;                  //need to fill in
-        tag <= recent1 ? tag2 : tag1;                    //need to fill in
-        hit <= hit1 || hit2;                    //need to fill in
+        // valid <= recent1 ? valid2 : valid1;                  //need to fill in
+        // dirty <= recent1 ? dirty2 : dirty1;                  //need to fill in
+        // hit <= hit1 || hit2;       //need to fill in
+        // tag <= recent1 ? tag2 : tag1;                    //need to fill in   
         
         // read $ with load==0 means moving data from $ to mem
         // no need to update recent bit
         // otherwise the refresh process will be affected
         if (load) begin
             if (hit1) begin
-                dout <=
-                    u_b_h_w[1] ? word1 :
-                    u_b_h_w[0] ? {u_b_h_w[2] ? 16'b0 : {16{half_word1[15]}}, half_word1} :
-                    {u_b_h_w[2] ? 24'b0 : {24{byte1[7]}}, byte1};
+                // dout <=
+                //     u_b_h_w[1] ? word1 :
+                //     u_b_h_w[0] ? {u_b_h_w[2] ? 16'b0 : {16{half_word1[15]}}, half_word1} :
+                //     {u_b_h_w[2] ? 24'b0 : {24{byte1[7]}}, byte1};
                 
                 // inner_recent will be refreshed only on r/w hit
                 // (including the r/w hit after miss and replacement)
@@ -108,18 +133,18 @@ module cache (
             end
             else if (hit2) begin
                     //need to fill in
-                dout <=
-                    u_b_h_w[1] ? word2 :
-                    u_b_h_w[0] ? {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
-                    {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2};
+                // dout <=
+                //     u_b_h_w[1] ? word2 :
+                //     u_b_h_w[0] ? {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
+                //     {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2};
 
                 inner_recent[addr_element1] <= 1'b0;
                 inner_recent[addr_element2] <= 1'b1;
             end
         end
-        else dout <= inner_data[ recent1 ? addr_word2 : addr_word1 ];
+        // else dout <= inner_data[ recent1 ? addr_word2 : addr_word1 ];
 
-        if (edit) begin
+        if (store) begin
             if (hit1) begin
                 inner_data[addr_word1] <= 
                     u_b_h_w[1] ?        // word?
@@ -171,32 +196,43 @@ module cache (
                 ;
                 inner_dirty[addr_element2] <= 1'b1; // set dirty
                 inner_recent[addr_element1] <= 1'b0;
-                inner_recent[addr_element2] <= 1'b1; // set recent
-            end
+                inner_recent[addr_element2] <= 1'b1; // set recent / LRU
+            end 
         end
 
-        if (store) begin
-            if (recent1) begin  // replace 2
+        if (replace) begin
+            if (hit1) begin
+                inner_data[addr_word1] <= din;
+                inner_valid[addr_element1] <= 1'b1;
+                inner_dirty[addr_element1] <= 1'b0;
+                inner_tag[addr_element1] <= addr_tag;
+                inner_recent[addr_element1] <= 1'b1;
+                inner_recent[addr_element2] <= 1'b0;
+            end
+            else if (hit2) begin
                 inner_data[addr_word2] <= din;
                 inner_valid[addr_element2] <= 1'b1;
                 inner_dirty[addr_element2] <= 1'b0;
                 inner_tag[addr_element2] <= addr_tag;
+                inner_recent[addr_element1] <= 1'b0;
+                inner_recent[addr_element2] <= 1'b1;
+            end
+            else if (recent1) begin  // replace 2
+                inner_data[addr_word2] <= din;
+                inner_valid[addr_element2] <= 1'b1;
+                inner_dirty[addr_element2] <= 1'b0;
+                inner_tag[addr_element2] <= addr_tag;
+                inner_recent[addr_element1] <= 1'b0;
+                inner_recent[addr_element2] <= 1'b1;
             end else begin
                 // recent2 == 1 => replace 1
-                if (recent2) begin
-                    inner_data[addr_word1] <= din;
-                    inner_valid[addr_element1] <= 1'b1;
-                    inner_dirty[addr_element1] <= 1'b0;
-                    inner_tag[addr_element1] <= addr_tag;
-                end else begin
-                    // recent2 == 0 => no data in this set, place to 1
-                    // recent1 == 0 && recent2 == 0 => no data in this set, place to 1
-                    inner_data[addr_word1] <= din;
-                    inner_valid[addr_element1] <= 1'b1;
-                    inner_dirty[addr_element1] <= 1'b0;
-                    inner_tag[addr_element1] <= addr_tag;
-                end
-                //need to fill in
+                // recent2 == 0 => no data in this set, place to 1
+                inner_data[addr_word1] <= din;
+                inner_valid[addr_element1] <= 1'b1;
+                inner_dirty[addr_element1] <= 1'b0;
+                inner_tag[addr_element1] <= addr_tag;
+                inner_recent[addr_element1] <= 1'b1;
+                inner_recent[addr_element2] <= 1'b0;
             end
         end
 

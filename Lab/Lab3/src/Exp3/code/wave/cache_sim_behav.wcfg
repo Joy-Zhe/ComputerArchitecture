@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="100000fs"></ZoomStartTime>
-      <ZoomEndTime time="476519fs"></ZoomEndTime>
-      <Cursor1Time time="224684fs"></Cursor1Time>
+      <ZoomStartTime time="2.310 ns"></ZoomStartTime>
+      <ZoomEndTime time="7.741 ns"></ZoomEndTime>
+      <Cursor1Time time="8.000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="180"></NameColumnWidth>
-      <ValueColumnWidth column_width="116"></ValueColumnWidth>
+      <ValueColumnWidth column_width="96"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="38" />
    <wvobject fp_name="/cache_sim/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -40,15 +40,15 @@
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject fp_name="/cache_sim/store" type="logic">
-      <obj_property name="ElementShortName">store</obj_property>
-      <obj_property name="ObjectShortName">store</obj_property>
+   <wvobject fp_name="/cache_sim/replace" type="logic">
+      <obj_property name="ElementShortName">replace</obj_property>
+      <obj_property name="ObjectShortName">replace</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject fp_name="/cache_sim/edit" type="logic">
-      <obj_property name="ElementShortName">edit</obj_property>
-      <obj_property name="ObjectShortName">edit</obj_property>
+   <wvobject fp_name="/cache_sim/store" type="logic">
+      <obj_property name="ElementShortName">store</obj_property>
+      <obj_property name="ObjectShortName">store</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
@@ -183,5 +183,29 @@
       <obj_property name="ObjectShortName">inner_data[0:255][31:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word1" type="array">
+      <obj_property name="ElementShortName">addr_word1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word1[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word2" type="array">
+      <obj_property name="ElementShortName">addr_word2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word2[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element1" type="array">
+      <obj_property name="ElementShortName">addr_element1[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element1[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element2" type="array">
+      <obj_property name="ElementShortName">addr_element2[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element2[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_index" type="array">
+      <obj_property name="ElementShortName">addr_index[4:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_index[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_tag" type="array">
+      <obj_property name="ElementShortName">addr_tag[22:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_tag[22:0]</obj_property>
    </wvobject>
 </wave_config>
