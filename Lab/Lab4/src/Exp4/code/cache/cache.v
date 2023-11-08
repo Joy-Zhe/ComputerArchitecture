@@ -13,11 +13,11 @@ module cache (
     input wire [2:0] u_b_h_w, // select signed or not & data width
                               // please refer to definition of LB, LH, LW, LBU, LHU in RV32I Instruction Set  
 	input wire [31:0] din,  // data write in
-	output reg hit = 0,  // hit or not
-	output reg [31:0] dout = 0,  // data read out
-	output reg valid = 0,  // valid bit
-	output reg dirty = 0,  // dirty bit
-	output reg [TAG_BITS-1:0] tag = 0  // tag bits
+	output hit,  // hit or not
+	output [31:0] dout,  // data read out
+	output valid,  // valid bit
+	output dirty,  // dirty bit
+	output [TAG_BITS-1:0] tag  // tag bits
 	);
 
     `include "addr_define.vh"
@@ -86,23 +86,23 @@ module cache (
     assign hit1 = valid1 & (tag1 == addr_tag);
     assign hit2 = valid2 & (tag2 == addr_tag);                 //need to fill in
 
-    // assign valid = hit1 ? valid1 : hit2 ? valid2 : recent1 ? valid2 : recent2 ? valid1 : 0;                  //need to fill in
-    // assign dirty = hit1 ? dirty1 : hit2 ? dirty2 : recent1 ? dirty2 : recent2 ? dirty1 : 0;                  //need to fill in
-    // assign hit = valid && (hit1 || hit2);       //need to fill in
-    // assign tag = hit1 ? tag1 : hit2 ? tag2 : recent1 ? tag2 : tag1;      
+    assign valid = hit1 ? valid1 : hit2 ? valid2 : recent1 ? valid2 : recent2 ? valid1 : 0;                  //need to fill in
+    assign dirty = hit1 ? dirty1 : hit2 ? dirty2 : recent1 ? dirty2 : recent2 ? dirty1 : 0;                  //need to fill in
+    assign hit = valid && (hit1 || hit2);       //need to fill in
+    assign tag = hit1 ? tag1 : hit2 ? tag2 : recent1 ? tag2 : tag1;      
 
-    // assign dout = (load && hit1) ? 
-    // (u_b_h_w[1] ? word1 : 
-    //     (u_b_h_w[0] ? 
-    //         {u_b_h_w[2] ? 16'b0 : {16{half_word1[15]}}, half_word1} :
-    //         {u_b_h_w[2] ? 24'b0 : {24{byte1[7]}}, byte1})) :
-    // (load && hit2) ? 
-    // (u_b_h_w[1] ? word2 :
-    //     (u_b_h_w[0] ? 
-    //         {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
-    //         {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2})) : 
-    // (!load) ? inner_data[ recent1 ? addr_word2 : addr_word1 ]
-    //     : 32'b0;
+    assign dout = (load && hit1) ? 
+    (u_b_h_w[1] ? word1 : 
+        (u_b_h_w[0] ? 
+            {u_b_h_w[2] ? 16'b0 : {16{half_word1[15]}}, half_word1} :
+            {u_b_h_w[2] ? 24'b0 : {24{byte1[7]}}, byte1})) :
+    (load && hit2) ? 
+    (u_b_h_w[1] ? word2 :
+        (u_b_h_w[0] ? 
+            {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
+            {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2})) : 
+    (!load) ? inner_data[ recent1 ? addr_word2 : addr_word1 ]
+        : 32'b0;
 
     
 

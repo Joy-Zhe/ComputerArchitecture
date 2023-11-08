@@ -134,6 +134,15 @@ module cmu (
     // cache ctrl
     always @ (*) begin
         case(state)
+            // S_IDLE: begin
+            //     cache_addr = cache_addr;
+            //     cache_load = cache_load;
+            //     cache_store = cache_store;
+            //     cache_replace = cache_replace;
+            //     cache_u_b_h_w = cache_u_b_h_w; // stay
+            //     cache_din = cache_din;
+            // end
+            
             S_IDLE, S_WAIT: begin
                 cache_addr = addr_rw;
                 cache_load = en_r;
@@ -143,7 +152,7 @@ module cmu (
                 cache_din = data_w;
             end
             S_BACK: begin
-                cache_addr = {addr_rw[ADDR_BITS-1:BLOCK_WIDTH], next_word_count, {ELEMENT_WORDS_WIDTH{1'b0}}};
+                cache_addr = {addr_rw[ADDR_BITS-1:BLOCK_WIDTH], word_count, {ELEMENT_WORDS_WIDTH{1'b0}}}; // next word count -> word count
                 cache_load = 1'b0;
                 cache_store = 1'b0;
                 cache_replace = 1'b0;
@@ -174,13 +183,13 @@ module cmu (
             S_BACK: begin
                 mem_cs_o = 1'b1;
                 mem_we_o = 1'b1;
-                mem_addr_o = {cache_tag, addr_rw[ADDR_BITS-TAG_BITS-1:BLOCK_WIDTH], next_word_count, {ELEMENT_WORDS_WIDTH{1'b0}}};
+                mem_addr_o = {cache_tag, addr_rw[ADDR_BITS-TAG_BITS-1:BLOCK_WIDTH], word_count, {ELEMENT_WORDS_WIDTH{1'b0}}}; // next word count -> word count
             end
 
             S_FILL: begin
                 mem_cs_o = 1'b1;
                 mem_we_o = 1'b0;
-                mem_addr_o = {addr_rw[ADDR_BITS-1:BLOCK_WIDTH], next_word_count, {ELEMENT_WORDS_WIDTH{1'b0}}};
+                mem_addr_o = {addr_rw[ADDR_BITS-1:BLOCK_WIDTH], word_count, {ELEMENT_WORDS_WIDTH{1'b0}}}; // next word count -> word count
             end
         endcase
     end

@@ -70,7 +70,7 @@ module HazardDetectionUnit(
     // stall handling 
     assign reg_FD_stall = stall; // stall
     assign reg_DE_flush = stall; // stall, flush the content in ID/EX
-    assign PC_EN_IF = ~stall; // stall, no IF
+    assign PC_EN_IF = ~stall && ~cmu_stall; // stall, no IF
     
     assign forward_ctrl_A = rs1_forward_ED ? 2'b01 :
                             (rs1_forward_MD ? 2'b10 :
