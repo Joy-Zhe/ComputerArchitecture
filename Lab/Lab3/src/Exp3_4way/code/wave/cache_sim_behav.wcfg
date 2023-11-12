@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="cache_sim_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="cache_sim" />
+            <top_module name="glbl" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0 ps"></ZoomStartTime>
+      <ZoomEndTime time="5,820 ps"></ZoomEndTime>
+      <Cursor1Time time="8,000 ps"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="180"></NameColumnWidth>
+      <ValueColumnWidth column_width="91"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="58" />
+   <wvobject fp_name="/cache_sim/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/rst" type="logic">
+      <obj_property name="ElementShortName">rst</obj_property>
+      <obj_property name="ObjectShortName">rst</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/counter" type="array">
+      <obj_property name="ElementShortName">counter[31:0]</obj_property>
+      <obj_property name="ObjectShortName">counter[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/load" type="logic">
+      <obj_property name="ElementShortName">load</obj_property>
+      <obj_property name="ObjectShortName">load</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/replace" type="logic">
+      <obj_property name="ElementShortName">replace</obj_property>
+      <obj_property name="ObjectShortName">replace</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/store" type="logic">
+      <obj_property name="ElementShortName">store</obj_property>
+      <obj_property name="ObjectShortName">store</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/invalid" type="logic">
+      <obj_property name="ElementShortName">invalid</obj_property>
+      <obj_property name="ObjectShortName">invalid</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/u_b_h_w" type="array">
+      <obj_property name="ElementShortName">u_b_h_w[2:0]</obj_property>
+      <obj_property name="ObjectShortName">u_b_h_w[2:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/addr" type="array">
+      <obj_property name="ElementShortName">addr[31:0]</obj_property>
+      <obj_property name="ObjectShortName">addr[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/din" type="array">
+      <obj_property name="ElementShortName">din[31:0]</obj_property>
+      <obj_property name="ObjectShortName">din[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/hit" type="logic">
+      <obj_property name="ElementShortName">hit</obj_property>
+      <obj_property name="ObjectShortName">hit</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/valid" type="logic">
+      <obj_property name="ElementShortName">valid</obj_property>
+      <obj_property name="ObjectShortName">valid</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/dirty" type="logic">
+      <obj_property name="ElementShortName">dirty</obj_property>
+      <obj_property name="ObjectShortName">dirty</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/tag" type="array">
+      <obj_property name="ElementShortName">tag[22:0]</obj_property>
+      <obj_property name="ObjectShortName">tag[22:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/dout" type="array">
+      <obj_property name="ElementShortName">dout[31:0]</obj_property>
+      <obj_property name="ObjectShortName">dout[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/word1" type="array">
+      <obj_property name="ElementShortName">word1[31:0]</obj_property>
+      <obj_property name="ObjectShortName">word1[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/word2" type="array">
+      <obj_property name="ElementShortName">word2[31:0]</obj_property>
+      <obj_property name="ObjectShortName">word2[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/word3" type="array">
+      <obj_property name="ElementShortName">word3[31:0]</obj_property>
+      <obj_property name="ObjectShortName">word3[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/word4" type="array">
+      <obj_property name="ElementShortName">word4[31:0]</obj_property>
+      <obj_property name="ObjectShortName">word4[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/tag1" type="array">
+      <obj_property name="ElementShortName">tag1[23:0]</obj_property>
+      <obj_property name="ObjectShortName">tag1[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/tag2" type="array">
+      <obj_property name="ElementShortName">tag2[23:0]</obj_property>
+      <obj_property name="ObjectShortName">tag2[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/tag3" type="array">
+      <obj_property name="ElementShortName">tag3[23:0]</obj_property>
+      <obj_property name="ObjectShortName">tag3[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/tag4" type="array">
+      <obj_property name="ElementShortName">tag4[23:0]</obj_property>
+      <obj_property name="ObjectShortName">tag4[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/recent1" type="logic">
+      <obj_property name="ElementShortName">recent1</obj_property>
+      <obj_property name="ObjectShortName">recent1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/recent2" type="logic">
+      <obj_property name="ElementShortName">recent2</obj_property>
+      <obj_property name="ObjectShortName">recent2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/recent3" type="logic">
+      <obj_property name="ElementShortName">recent3</obj_property>
+      <obj_property name="ObjectShortName">recent3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/recent4" type="logic">
+      <obj_property name="ElementShortName">recent4</obj_property>
+      <obj_property name="ObjectShortName">recent4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/hit1" type="logic">
+      <obj_property name="ElementShortName">hit1</obj_property>
+      <obj_property name="ObjectShortName">hit1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/hit2" type="logic">
+      <obj_property name="ElementShortName">hit2</obj_property>
+      <obj_property name="ObjectShortName">hit2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/hit3" type="logic">
+      <obj_property name="ElementShortName">hit3</obj_property>
+      <obj_property name="ObjectShortName">hit3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/hit4" type="logic">
+      <obj_property name="ElementShortName">hit4</obj_property>
+      <obj_property name="ObjectShortName">hit4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/valid1" type="logic">
+      <obj_property name="ElementShortName">valid1</obj_property>
+      <obj_property name="ObjectShortName">valid1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/valid2" type="logic">
+      <obj_property name="ElementShortName">valid2</obj_property>
+      <obj_property name="ObjectShortName">valid2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/valid3" type="logic">
+      <obj_property name="ElementShortName">valid3</obj_property>
+      <obj_property name="ObjectShortName">valid3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/valid4" type="logic">
+      <obj_property name="ElementShortName">valid4</obj_property>
+      <obj_property name="ObjectShortName">valid4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/dirty1" type="logic">
+      <obj_property name="ElementShortName">dirty1</obj_property>
+      <obj_property name="ObjectShortName">dirty1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/dirty2" type="logic">
+      <obj_property name="ElementShortName">dirty2</obj_property>
+      <obj_property name="ObjectShortName">dirty2</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/dirty3" type="logic">
+      <obj_property name="ElementShortName">dirty3</obj_property>
+      <obj_property name="ObjectShortName">dirty3</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/dirty4" type="logic">
+      <obj_property name="ElementShortName">dirty4</obj_property>
+      <obj_property name="ObjectShortName">dirty4</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/inner_recent" type="array">
+      <obj_property name="ElementShortName">inner_recent[1:0][63:0]</obj_property>
+      <obj_property name="ObjectShortName">inner_recent[1:0][63:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/inner_valid" type="array">
+      <obj_property name="ElementShortName">inner_valid[63:0]</obj_property>
+      <obj_property name="ObjectShortName">inner_valid[63:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/inner_dirty" type="array">
+      <obj_property name="ElementShortName">inner_dirty[63:0]</obj_property>
+      <obj_property name="ObjectShortName">inner_dirty[63:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/inner_tag" type="array">
+      <obj_property name="ElementShortName">inner_tag[0:63][23:0]</obj_property>
+      <obj_property name="ObjectShortName">inner_tag[0:63][23:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/inner_data" type="array">
+      <obj_property name="ElementShortName">inner_data[0:255][31:0]</obj_property>
+      <obj_property name="ObjectShortName">inner_data[0:255][31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word1" type="array">
+      <obj_property name="ElementShortName">addr_word1[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word1[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word2" type="array">
+      <obj_property name="ElementShortName">addr_word2[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word2[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word3" type="array">
+      <obj_property name="ElementShortName">addr_word3[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word3[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_word4" type="array">
+      <obj_property name="ElementShortName">addr_word4[7:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_word4[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element1" type="array">
+      <obj_property name="ElementShortName">addr_element1[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element1[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element2" type="array">
+      <obj_property name="ElementShortName">addr_element2[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element2[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element3" type="array">
+      <obj_property name="ElementShortName">addr_element3[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element3[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_element4" type="array">
+      <obj_property name="ElementShortName">addr_element4[5:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_element4[5:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_index" type="array">
+      <obj_property name="ElementShortName">addr_index[3:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_index[3:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/addr_tag" type="array">
+      <obj_property name="ElementShortName">addr_tag[23:0]</obj_property>
+      <obj_property name="ObjectShortName">addr_tag[23:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/half_word3" type="array">
+      <obj_property name="ElementShortName">half_word3[15:0]</obj_property>
+      <obj_property name="ObjectShortName">half_word3[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/half_word4" type="array">
+      <obj_property name="ElementShortName">half_word4[15:0]</obj_property>
+      <obj_property name="ObjectShortName">half_word4[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/byte3" type="array">
+      <obj_property name="ElementShortName">byte3[7:0]</obj_property>
+      <obj_property name="ObjectShortName">byte3[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/cache_sim/uut/byte4" type="array">
+      <obj_property name="ElementShortName">byte4[7:0]</obj_property>
+      <obj_property name="ObjectShortName">byte4[7:0]</obj_property>
+   </wvobject>
+</wave_config>

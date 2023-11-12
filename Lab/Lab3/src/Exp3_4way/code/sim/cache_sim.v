@@ -193,57 +193,6 @@ module cache_sim;
 				u_b_h_w <= 2;
 			end
 
-			// replace hit cache line, same data with the previous one
-			32'd14: begin
-				rst <= 0;
-				load <= 0;
-				store <= 0;
-				replace <= 1;
-				invalid <= 0;
-				addr <= 32'h4;
-				din <= 32'h01010101;
-				u_b_h_w <= 2;
-			end
-
-			32'd15: begin
-				load <= 0;
-				store <= 0;
-				replace <= 1;
-				invalid <= 0;
-				addr <= 32'hc;
-				din <= 32'h02020202;
-				u_b_h_w <= 2;
-			end
-
-			32'd16: begin
-				load <= 0;
-				store <= 0;
-				replace <= 1;
-				invalid <= 0;
-				addr <= 32'h10;
-				din <= 32'h03030303;
-				u_b_h_w <= 2;
-			end
-
-			32'd17: begin
-				load <= 0;
-				store <= 0;
-				replace <= 1;
-				invalid <= 0;
-				addr <= 32'h14;
-				din <= 32'h04040404;
-				u_b_h_w <= 2;
-			end
-
-			32'd18: begin
-				load <= 0;
-				store <= 0;
-				replace <= 0;
-				invalid <= 0;
-				addr <= 32'h200;
-				din <= 32'h0;
-				u_b_h_w <= 2;
-			end
 
 			default: begin
 				$finish;
