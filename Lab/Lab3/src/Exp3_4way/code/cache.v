@@ -25,12 +25,13 @@ module cache (
     wire [31:0] word1, word2, word3, word4;
     wire [15:0] half_word1, half_word2, half_word3, half_word4;
     wire [7:0]  byte1, byte2, byte3, byte4;
-    wire recent1, recent2, recent3, recent4, valid1, valid2, valid3, valid4, dirty1, dirty2, dirty3, dirty4;
+    wire [1:0] recent1, recent2, recent3, recent4;
+    wire valid1, valid2, valid3, valid4, dirty1, dirty2, dirty3, dirty4, replace1, replace2, replace3, replace4;
     wire [TAG_BITS-1:0] tag1, tag2, tag3, tag4;
     wire hit1, hit2, hit3, hit4;
 
-    // reg [1:0] inner_recent [ELEMENT_NUM-1:0]; // 2 LRU bits
-    reg [2:0] inner_recent [ELEMENT_NUM / WAYS - 1:0]; // 3 LRU bits for each set, [2] for A/B(0:replace A 1:replace B), [1] for C/D(0:replace C 1:replace D), [0] for AB/CD(0:replace AB 1:replace CD)
+    reg [1:0] inner_recent [ELEMENT_NUM-1:0]; // 2 LRU bits
+    // reg [2:0] inner_recent [ELEMENT_NUM / WAYS - 1:0]; // 3 LRU bits for each set, [2] for A/B(0:replace A 1:replace B), [1] for C/D(0:replace C 1:replace D), [0] for AB/CD(0:replace AB 1:replace CD)
     reg [ELEMENT_NUM-1:0] inner_valid = 0;
     reg [ELEMENT_NUM-1:0] inner_dirty = 0;
     reg [TAG_BITS-1:0] inner_tag [0:ELEMENT_NUM-1];
@@ -62,8 +63,8 @@ module cache (
     wire [ELEMENT_INDEX_WIDTH+ELEMENT_WORDS_WIDTH-1:0] addr_word3; 
     wire [ELEMENT_INDEX_WIDTH+ELEMENT_WORDS_WIDTH-1:0] addr_word4;    // element index + word index
 
-    assign addr_tag = addr[31:8];  // 31-8 tag bits 23bits         //need to fill in
-    assign addr_index = addr[7:4]; // 7-4 index bits 5bits         //need to fill in
+    assign addr_tag = addr[31:8];  // 31-8 tag bits 24bits         //need to fill in
+    assign addr_index = addr[7:4]; // 7-4 index bits 4bits         //need to fill in
     assign addr_element1 = {addr_index, 2'b00};  // way-0
     assign addr_element2 = {addr_index, 2'b01};  // way-1    
     assign addr_element3 = {addr_index, 2'b10};  // way-2    
@@ -100,7 +101,12 @@ module cache (
     assign recent1 = inner_recent[addr_element1];
     assign recent2 = inner_recent[addr_element2];              
     assign recent3 = inner_recent[addr_element3];              
-    assign recent4 = inner_recent[addr_element4];              
+    assign recent4 = inner_recent[addr_element4];    
+
+    assign replace1 = recent1 >= recent2 && recent1 >= recent3 && recent1 >= recent4;
+    assign replace2 = recent2 >= recent1 && recent2 >= recent3 && recent2 >= recent4;
+    assign replace3 = recent3 >= recent1 && recent3 >= recent2 && recent3 >= recent4;
+    assign replace4 = recent4 >= recent1 && recent4 >= recent2 && recent4 >= recent3;          
 
     assign valid1 = inner_valid[addr_element1];
     assign valid2 = inner_valid[addr_element2];
@@ -161,8 +167,7 @@ module cache (
         (u_b_h_w[0] ? 
             {u_b_h_w[2] ? 16'b0 : {16{half_word4[15]}}, half_word4} :
             {u_b_h_w[2] ? 24'b0 : {24{byte4[7]}}, byte4})) :
-    (!load) ? inner_data[ recent1 ? addr_word2 : addr_word1 ]
-        : 32'b0;
+    inner_data[ replace1 ? addr_word1 : replace2 ? addr_word2 : replace3 ? addr_word3 : addr_word4 ];
 
     
 
@@ -175,33 +180,79 @@ module cache (
                 // inner_recent will be refreshed only on r/w hit
                 // (including the r/w hit after miss and replacement)
                 // if inner_recent[other] >= inner_recent[hit], then no need to update, because it's still ahead of inner_recent[hit].
-                inner_recent[addr_index] = 3'b100; 
+                inner_recent[addr_element1] <= 2'b00;
+                if (inner_recent[addr_element2] <= inner_recent[addr_element1])
+                    inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
+                if (inner_recent[addr_element3] <= inner_recent[addr_element1])
+                    inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
+                if (inner_recent[addr_element4] <= inner_recent[addr_element1])
+                    inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit2) begin
                 inner_recent[addr_element2] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element2] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element2])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element2] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element2])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element2] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element2])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit3) begin
                 inner_recent[addr_element3] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element3] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element3])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element3] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element3])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element3] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element3])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit4) begin
                 inner_recent[addr_element4] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element4] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element4])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element4] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element4])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element4] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element4])
+                    inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
+            end
+            else if (replace1) begin  // replace 1
+                // update LRU
+                inner_recent[addr_element1] <= 2'b00;
+                if (inner_recent[addr_element2] <= inner_recent[addr_element1])
+                    inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
+                if (inner_recent[addr_element3] <= inner_recent[addr_element1])
+                    inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
+                if (inner_recent[addr_element4] <= inner_recent[addr_element1])
+                    inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
+            end 
+            else if (replace2) begin
+                // update LRU
+                inner_recent[addr_element2] <= 2'b00;
+                if (inner_recent[addr_element1] <= inner_recent[addr_element2])
+                    inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
+                if (inner_recent[addr_element3] <= inner_recent[addr_element2])
+                    inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
+                if (inner_recent[addr_element4] <= inner_recent[addr_element2])
+                    inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
+            end 
+            else if (replace3) begin
+                // update LRU
+                inner_recent[addr_element3] <= 2'b00;
+                if (inner_recent[addr_element1] <= inner_recent[addr_element3])
+                    inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
+                if (inner_recent[addr_element2] <= inner_recent[addr_element3])
+                    inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
+                if (inner_recent[addr_element4] <= inner_recent[addr_element3])
+                    inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
+            end 
+            else if (replace4) begin
+                // update LRU
+                inner_recent[addr_element4] <= 2'b00;
+                if (inner_recent[addr_element1] <= inner_recent[addr_element4])
+                    inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
+                if (inner_recent[addr_element2] <= inner_recent[addr_element4])
+                    inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
+                if (inner_recent[addr_element3] <= inner_recent[addr_element4])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
             end
         end
@@ -230,11 +281,11 @@ module cache (
                 ;
                 inner_dirty[addr_element1] <= 1'b1;
                 inner_recent[addr_element1] <= 2'b00;
-                if (inner_recent[addr_element2] < inner_recent[addr_element1] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element1])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element1] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element1])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element1] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element1])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit2) begin
@@ -261,11 +312,11 @@ module cache (
                 ;
                 inner_dirty[addr_element2] <= 1'b1; // set dirty
                 inner_recent[addr_element2] <= 2'b00; // set recent
-                if (inner_recent[addr_element1] < inner_recent[addr_element2] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element2])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element2] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element2])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element2] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element2])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end 
             else if (hit3) begin
@@ -292,11 +343,11 @@ module cache (
                 ;
                 inner_dirty[addr_element3] <= 1'b1; // set dirty
                 inner_recent[addr_element3] <= 2'b00; // set recent
-                if (inner_recent[addr_element1] < inner_recent[addr_element3] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element3])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element3] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element3])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element3] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element3])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit4) begin
@@ -323,11 +374,11 @@ module cache (
                 ;
                 inner_dirty[addr_element4] <= 1'b1; // set dirty
                 inner_recent[addr_element4] <= 2'b00; // set recent
-                if (inner_recent[addr_element1] < inner_recent[addr_element4] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element4])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element4] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element4])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element4] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element4])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
             end
         end
@@ -340,11 +391,11 @@ module cache (
                 inner_tag[addr_element1] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element1] <= 2'b00;
-                if (inner_recent[addr_element2] < inner_recent[addr_element1] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element1])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element1] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element1])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element1] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element1])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit2) begin
@@ -354,11 +405,11 @@ module cache (
                 inner_tag[addr_element2] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element2] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element2] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element2])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element2] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element2])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element2] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element2])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit3) begin
@@ -368,11 +419,11 @@ module cache (
                 inner_tag[addr_element3] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element3] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element3] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element3])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element3] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element3])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element3] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element3])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
             end
             else if (hit4) begin
@@ -382,64 +433,67 @@ module cache (
                 inner_tag[addr_element4] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element4] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element4] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element4])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element4] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element4])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element4] || inner_recent[addr_element3] == 2'b00)  
+                if (inner_recent[addr_element3] <= inner_recent[addr_element4])  
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
             end
-            else if (recent1 == 2'b11 || (recent1 == 2'b00 && recent2 == 2'b00 || recent3 == 2'b00 || recent4 == 2'b00)) begin  // replace 1
+            else if (replace1) begin  // replace 1
                 inner_data[addr_word1] <= din;
                 inner_valid[addr_element1] <= 1'b1;
                 inner_dirty[addr_element1] <= 1'b0;
                 inner_tag[addr_element1] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element1] <= 2'b00;
-                if (inner_recent[addr_element2] < inner_recent[addr_element1] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element1])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element1] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element1])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element1] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element1])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
-            end else if (recent2 == 2'b11) begin
+            end 
+            else if (replace2) begin
                 inner_data[addr_word2] <= din;
                 inner_valid[addr_element2] <= 1'b1;
                 inner_dirty[addr_element2] <= 1'b0;
                 inner_tag[addr_element2] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element2] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element2] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element2])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element2] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element2])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element2] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element2])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
-            end else if (recent3 == 2'b11) begin
+            end 
+            else if (replace3) begin
                 inner_data[addr_word3] <= din;
                 inner_valid[addr_element3] <= 1'b1;
                 inner_dirty[addr_element3] <= 1'b0;
                 inner_tag[addr_element3] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element3] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element3] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element3])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element3] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element3])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element4] < inner_recent[addr_element3] || inner_recent[addr_element4] == 2'b00)
+                if (inner_recent[addr_element4] <= inner_recent[addr_element3])
                     inner_recent[addr_element4] <= inner_recent[addr_element4] + 2'b01;
-            end else if (recent4 == 2'b11) begin
+            end 
+            else if (replace4) begin
                 inner_data[addr_word4] <= din;
                 inner_valid[addr_element4] <= 1'b1;
                 inner_dirty[addr_element4] <= 1'b0;
                 inner_tag[addr_element4] <= addr_tag;
                 // update LRU
                 inner_recent[addr_element4] <= 2'b00;
-                if (inner_recent[addr_element1] < inner_recent[addr_element4] || inner_recent[addr_element1] == 2'b00)
+                if (inner_recent[addr_element1] <= inner_recent[addr_element4])
                     inner_recent[addr_element1] <= inner_recent[addr_element1] + 2'b01;
-                if (inner_recent[addr_element2] < inner_recent[addr_element4] || inner_recent[addr_element2] == 2'b00)
+                if (inner_recent[addr_element2] <= inner_recent[addr_element4])
                     inner_recent[addr_element2] <= inner_recent[addr_element2] + 2'b01;
-                if (inner_recent[addr_element3] < inner_recent[addr_element4] || inner_recent[addr_element3] == 2'b00)
+                if (inner_recent[addr_element3] <= inner_recent[addr_element4])
                     inner_recent[addr_element3] <= inner_recent[addr_element3] + 2'b01;
             end
         end

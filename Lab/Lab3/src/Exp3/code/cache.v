@@ -105,8 +105,7 @@ module cache (
         (u_b_h_w[0] ? 
             {u_b_h_w[2] ? 16'b0 : {16{half_word2[15]}}, half_word2} :
             {u_b_h_w[2] ? 24'b0 : {24{byte2[7]}}, byte2})) : 
-    (!load) ? inner_data[ recent1 ? addr_word2 : addr_word1 ]
-        : 32'b0;
+    inner_data[ recent1 ? addr_word2 : addr_word1 ];
 
     
 
