@@ -155,6 +155,26 @@ module cache_sim;
 
 			32'd10: begin
 				load <= 0;
+				store <= 0;
+				replace <= 1;
+				invalid <= 0;
+				addr <= 32'h1200;
+				din <= 32'h32145678;
+				u_b_h_w <= 2;
+			end
+
+			32'd11: begin
+				load <= 0;
+				store <= 0;
+				replace <= 0;
+				invalid <= 0;
+				addr <= 32'h200;
+				din <= 32'h0;
+				u_b_h_w <= 2;
+			end
+
+			32'd12: begin
+				load <= 0;
 				store <= 1;
 				replace <= 0;
 				invalid <= 0;
@@ -163,7 +183,7 @@ module cache_sim;
 				u_b_h_w <= 0;
 			end
 
-			32'd11: begin
+			32'd13: begin
 				load <= 0;
 				store <= 0;
 				replace <= 0;
@@ -173,7 +193,7 @@ module cache_sim;
 				u_b_h_w <= 2;
 			end
 
-			32'd12: begin
+			32'd14: begin
 				load <= 1;
 				store <= 0;
 				replace <= 0;
@@ -183,8 +203,18 @@ module cache_sim;
 				u_b_h_w <= 4;
 			end
 
-			32'd13: begin
+			32'd15: begin
 				load <= 1;
+				store <= 0;
+				replace <= 0;
+				invalid <= 0;
+				addr <= 32'h400;
+				din <= 32'h0;
+				u_b_h_w <= 2;
+			end
+
+			32'd16: begin
+				load <= 0;
 				store <= 0;
 				replace <= 0;
 				invalid <= 0;

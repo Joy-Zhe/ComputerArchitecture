@@ -140,7 +140,7 @@ module cache (
         end
         // else dout <= inner_data[ recent1 ? addr_word2 : addr_word1 ];
 
-        if (store) begin
+        else if (store) begin
             if (hit1) begin
                 inner_data[addr_word1] <= 
                     u_b_h_w[1] ?        // word?
@@ -196,7 +196,7 @@ module cache (
             end 
         end
 
-        if (replace) begin
+        else if (replace) begin
             if (hit1) begin
                 inner_data[addr_word1] <= din;
                 inner_valid[addr_element1] <= 1'b1;
@@ -233,7 +233,7 @@ module cache (
         end
 
         // not used currently, can be used to reset the cache.
-        if (invalid) begin
+        else if (invalid) begin
             inner_recent[addr_element1] <= 1'b0;
             inner_recent[addr_element2] <= 1'b0;
             inner_valid[addr_element1] <= 1'b0;
