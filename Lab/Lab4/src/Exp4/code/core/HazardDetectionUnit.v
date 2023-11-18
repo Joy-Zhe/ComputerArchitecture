@@ -7,7 +7,7 @@ module HazardDetectionUnit(
     input[4:0] rd_EXE, rd_MEM, rs1_ID, rs2_ID, rs2_EXE,
     input cmu_stall,
     output PC_EN_IF, reg_FD_EN, reg_FD_stall, reg_FD_flush,
-        reg_DE_EN, reg_DE_flush, reg_EM_EN, reg_EM_flush, reg_MW_EN, reg_MW_flush,
+        reg_DE_EN, reg_DE_flush, reg_EM_EN, reg_MW_EN, reg_EM_flush, reg_MW_flush,
     output forward_ctrl_ls,
     output[1:0] forward_ctrl_A, forward_ctrl_B
 );
@@ -17,6 +17,7 @@ module HazardDetectionUnit(
     assign reg_DE_EN = ~cmu_stall;
     assign reg_EM_EN = ~cmu_stall;
     assign reg_MW_EN = 1'b1;
+    assign reg_EM_flush = 1'b0;
     assign reg_MW_flush = cmu_stall;
 
     // hazard_optype[1:0]: 00 for no hazard, 01 for data, 10 for load, 11 for store

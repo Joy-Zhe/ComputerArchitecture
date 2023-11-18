@@ -74,6 +74,7 @@ module  CPUTEST(input[31:0]PC_IF,               //IF阶段PC指针信号
 
             8: Test_signal = PC_EXE;      
             9: Test_signal = inst_EXE;    
+            // 10: Test_signal = {13'h0, cmu_state, 13'h0, ram_state};
             10: Test_signal = {13'h0, cmu_state, 13'h0, ram_state};
             11: Test_signal = PCJump;
 

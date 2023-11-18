@@ -61,6 +61,12 @@
       "width": "w"
     },
     {
+      "type": "replace",
+      "addr": 4608,
+      "data_in": 1023141004,
+      "width": "w"
+    },
+    {
       "type": "store",
       "addr": 516,
       "data_in": 2298553157,
@@ -78,6 +84,11 @@
     },
     {
       "type": "load",
+      "addr": 1024,
+      "width": "w"
+    },
+    {
+      "type": "no-op",
       "addr": 1024,
       "width": "w"
     }
