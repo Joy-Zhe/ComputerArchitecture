@@ -138,19 +138,19 @@ module CtrlUnit(
                         {3{use_JUMP}} & 3'd5 ;
 
     reg B_in_FU, J_in_FU; // 1: valid, 0: invalid
-    reg[5:0] FU_status; // 0: empty, 1: ALU, 2: MEM, 3: MUL, 4: DIV, 5: JUMP
+    reg[5:0] FU_status; // 0: empty, 1: ALU, 2: MEM, 3: MUL, 4: DIV, 5: JUMP, boolean——FU_status[5]=1代表JUMP模块busy
     reg[2:0] reservation_reg [0:31]; //reservation station
     reg[4:0] FU_write_to [5:0]; //destination register
     reg[5:0] FU_writeback_en; //write back enable
     reg[4:0] FU_delay_cycles [5:0]; // delay cycles
     reg reg_ID_flush_next; // flush next instruction
     integer i;
-    
+    // 先预约，再左移
     wire WAW = reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]] == rd;    //! to fill sth.in
     // read after write
-    wire RAW_rs1 = rs1 == FU_write_to[reservation_reg[0]] && reservation_reg[0] != 0;    //! to fill sth.in
-    wire RAW_rs2 = rs2 == FU_write_to[reservation_reg[0]] && reservation_reg[0] != 0;    //! to fill sth.in
-    wire FU_hazard = WAW | RAW_rs1 | RAW_rs2;    //! to fill sth.in
+    wire RAW_rs1 = rs1 == reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]];    //! to fill sth.in
+    wire RAW_rs2 = rs2 == reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]];    //! to fill sth.in
+    wire FU_hazard = reservation_reg[0] != 0 && FU_status[reservation_reg[0]] == 1;    //! to fill sth.in
 
     initial begin
         B_in_FU = 0;
@@ -187,27 +187,38 @@ module CtrlUnit(
         end
         else begin
             if (reservation_reg[0] != 0) begin  // FU operation write back
-                FU_writeback_en[reservation_reg[0]] <= (FU_delay_cycles[FU_status] == 0); // write back enable, 1: enable, 0: disable
+                FU_writeback_en[reservation_reg[0]] <= (FU_delay_cycles[reservation_reg[0]] == 0); // write back enable, 1: enable, 0: disable
                 if (FU_writeback_en[reservation_reg[0]]) begin
-                    FU_status <= 6'b0;
+                    FU_status[reservation_reg[0]] <= 6'b0;
+                    use_FU <= 0;
                     reservation_reg[0] <= 0;
                     FU_write_to[reservation_reg[0]] <= 0;
+                    // reset delay cycles
+                    case (reservation_reg[0])
+                        1: FU_delay_cycles[1] <= 5'd1;         // ALU cycles
+                        2: FU_delay_cycles[2] <= 5'd2;         // MEM cycles
+                        3: FU_delay_cycles[3] <= 5'd7;         // MUL cycles
+                        4: FU_delay_cycles[4] <= 5'd24;        // DIV cycles
+                        5: FU_delay_cycles[5] <= 5'd2;         // JUMP cycles
+                    endcase
+                    // shift reservation station
+                    for (i = 0; i < 31; i++) begin 
+                        reservation_reg[i] <= reservation_reg[i + 1];
+                    end
+                    reservation_reg[31] <= 0;
                 end
-                             //! to fill sth.in
+                //! to fill sth.in
             end
             if (use_FU == 0) begin //  check whether FU is used
-                if (valid_ID) begin
-                    
-                end
-                            //! to fill sth.in
-            end
-            else if (FU_hazard  | reg_ID_flush | reg_ID_flush_next) begin   // stall
-
-                             //! to fill sth.in
-                end
-            else begin  // regist FU operation
                 
-                             //! to fill sth.in
+                //! to fill sth.in
+            end
+            else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
+                
+                //! to fill sth.in
+            end
+            else begin  // regist FU operation
+                //! to fill sth.in
                 B_in_FU <= B_valid;
                 J_in_FU <= JAL | JALR;
             end
