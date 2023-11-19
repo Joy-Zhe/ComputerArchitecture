@@ -34,13 +34,37 @@ reg reg_ID_flush_next; // flush next instruction
 
 6. `reg_ID_flush_next`:表示是否需要清空ID阶段的指令，例如`reg_ID_flush_next == 1'b1`代表需要清空ID阶段的指令。
 
+```Verilog
+wire[2:0] use_FU =  {3{use_ALU}}  & 3'd1 |
+                    {3{use_MEM}}  & 3'd2 |
+                    {3{use_MUL}}  & 3'd3 |
+                    {3{use_DIV}}  & 3'd4 |
+                    {3{use_JUMP}} & 3'd5 ;
+```
+1. `use_FU`:表示当前需要使用的FU的编号，例如`use_FU == 3'd1`代表当前需要使用的FU是ALU模块。猜测使用来更新新入预约站的指令的FU编号。
+
+
 ## 对预约站工作模式的猜测
 
 1. 目前的问题在于`reservation_reg`何时进行左移，如果按照PPT上所说每个时钟周期均左移，那么对于需要长时间delay的指令，将会造成提前出预约站，导致后续指令无法正确判断hazard，因此猜测应该是在FU完成指令后才进行左移，更新预约站
 
 > 预约站的更新
 + 预约站的更新模式如何，如何将下一条指令的FU类型更新到预约站中？预约站中不一定为空，此时可能有多条已经预约的指令等待发射(**issue**)，如果当前指令已经成功写回，则可以将其从预约站中清除，也即左移？
-+ 预约站中保存的是因为各种hazard无法正常issue的指令，正常发射的指令只需要顺序发射即可，不用进行预约，反正预约了也会立即被左移更新掉。
++ 预约站中保存的是因为各种hazard无法正常issue的指令，正常发射的指令只需要顺序发射即可，但也要走一遍流程，预约然后发射，待到写回时左移出预约站，出预约站代表着被成功写回，占用状态解除
+
+> 一种可能的猜测
+```Verilog
+else begin  // regist FU operation
+    //! to fill sth.in
+    FU_status[use_FU] <= 1;
+    FU_write_to[use_FU] <= rd;
+    reservation_reg[31] <= use_FU;
+    B_in_FU <= B_valid;
+    J_in_FU <= JAL | JALR;
+end
+```
++ 可能是靠以上的操作吧，直接插到最右边，反正最大也就delay 24个周期？但是似乎也不太对，这样第一条移不走
+
 
 ## 对写回模块的猜测
 

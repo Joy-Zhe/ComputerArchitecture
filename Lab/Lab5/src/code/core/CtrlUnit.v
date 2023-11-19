@@ -190,7 +190,6 @@ module CtrlUnit(
                 FU_writeback_en[reservation_reg[0]] <= (FU_delay_cycles[reservation_reg[0]] == 0); // write back enable, 1: enable, 0: disable
                 if (FU_writeback_en[reservation_reg[0]]) begin
                     FU_status[reservation_reg[0]] <= 6'b0;
-                    use_FU <= 0;
                     reservation_reg[0] <= 0;
                     FU_write_to[reservation_reg[0]] <= 0;
                     // reset delay cycles
@@ -202,12 +201,20 @@ module CtrlUnit(
                         5: FU_delay_cycles[5] <= 5'd2;         // JUMP cycles
                     endcase
                     // shift reservation station
-                    for (i = 0; i < 31; i++) begin 
+                    for (i = 0; i < 31; i=i+1) begin 
                         reservation_reg[i] <= reservation_reg[i + 1];
                     end
                     reservation_reg[31] <= 0;
+                end 
+                else begin // delay cycles - 1
+                    FU_delay_cycles[reservation_reg[0]] <= FU_delay_cycles[reservation_reg[0]] - 1;
                 end
                 //! to fill sth.in
+            end
+            else begin
+                for(i = 0; i < 31; i=i+1) begin
+                    reservation_reg[i] <= reservation_reg[i + 1];
+                end
             end
             if (use_FU == 0) begin //  check whether FU is used
                 
@@ -219,6 +226,9 @@ module CtrlUnit(
             end
             else begin  // regist FU operation
                 //! to fill sth.in
+                FU_status[use_FU] <= 1;
+                FU_write_to[use_FU] <= rd;
+                reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
                 B_in_FU <= B_valid;
                 J_in_FU <= JAL | JALR;
             end
