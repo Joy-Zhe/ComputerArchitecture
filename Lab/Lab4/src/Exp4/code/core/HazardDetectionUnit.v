@@ -16,7 +16,7 @@ module HazardDetectionUnit(
     assign reg_FD_EN = ~cmu_stall;
     assign reg_DE_EN = ~cmu_stall;
     assign reg_EM_EN = ~cmu_stall;
-    assign reg_MW_EN = 1'b1;
+    assign reg_MW_EN = ~cmu_stall;
     assign reg_EM_flush = 1'b0;
     assign reg_MW_flush = cmu_stall;
 
