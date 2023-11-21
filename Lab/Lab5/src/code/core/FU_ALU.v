@@ -17,12 +17,11 @@ module FU_ALU(
     reg[31:0] A, B;
 
     always@(posedge clk) begin
-        if(EN & ~state) begin // state == 0
+        if(EN & state == 0) begin // state == 0
             //! to fill sth.in
             Control <= ALUControl;
             A <= ALUA;
             B <= ALUB;
-
             state <= 1;
         end
         else state <= 0;

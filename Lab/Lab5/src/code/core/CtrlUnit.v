@@ -148,8 +148,8 @@ module CtrlUnit(
     // 先预约，再左移
     wire WAW = reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]] == rd;    //! to fill sth.in
     // read after write
-    wire RAW_rs1 = rs1 == reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]];    //! to fill sth.in
-    wire RAW_rs2 = rs2 == reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]];    //! to fill sth.in
+    wire RAW_rs1 = reservation_reg[0] != 0 && rs1 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
+    wire RAW_rs2 = reservation_reg[0] != 0 && rs2 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
     wire FU_hazard = reservation_reg[0] != 0 && FU_status[reservation_reg[0]] == 1;    //! to fill sth.in
 
     initial begin
@@ -216,8 +216,23 @@ module CtrlUnit(
                     reservation_reg[i] <= reservation_reg[i + 1];
                 end
             end
-            if (use_FU == 0) begin //  check whether FU is used
-                
+            if (use_FU == 0) begin //  check whether FU is used, write back?
+                // 当前未使用任何一个FU
+                if (rd_used) begin
+                    // 当前指令需要写回
+                    if (WAW) begin // stall?
+                        // 当前指令写回寄存器与已经预约的寄存器相同
+                        //! to fill sth.in
+                    end
+                    else begin // write back
+                        // 当前指令写回寄存器与已经预约的寄存器不同
+                        
+                    end
+                end
+                else begin
+                    // 当前指令不需要写回
+                    //! to fill sth.in
+                end
                 //! to fill sth.in
             end
             else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
