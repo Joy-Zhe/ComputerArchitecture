@@ -145,7 +145,7 @@ module CtrlUnit(
     reg[4:0] FU_delay_cycles [5:0]; // delay cycles
     reg reg_ID_flush_next; // flush next instruction
     integer i;
-    // 先预约，再左移
+    // write after write
     wire WAW = reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]] == rd;    //! to fill sth.in
     // read after write
     wire RAW_rs1 = reservation_reg[0] != 0 && rs1 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
@@ -236,14 +236,23 @@ module CtrlUnit(
                 //! to fill sth.in
             end
             else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
-                
+                if(valid_ID) begin
+                    reg_ID_flush <= 1'b1; // flush next Instruction
+                end
                 //! to fill sth.in
             end
             else begin  // regist FU operation
                 //! to fill sth.in
                 FU_status[use_FU] <= 1;
                 FU_write_to[use_FU] <= rd;
-                reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
+                // reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
+                for(i = 0; i < 31; i=i+1) begin
+                    // update reservation reg, regist new FU 
+                    if(reservation_reg[i] == 0) begin
+                        reservation_reg[i] <= use_FU;
+                        break;
+                    end
+                end
                 B_in_FU <= B_valid;
                 J_in_FU <= JAL | JALR;
             end

@@ -106,3 +106,10 @@ always @(posedge clk or posedge rst) begin
 end
 ```
 1. 
+
+
+## RV32core相关连线
+
+1. Write Back部分的连线似乎多给了一些input port，实际上使用的只有I1-I5，即对应的5个FU编号，其余的input port不管了，直接留空
+
+2. 

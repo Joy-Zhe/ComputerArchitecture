@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="33.630 ns"></ZoomStartTime>
-      <ZoomEndTime time="58.079 ns"></ZoomEndTime>
-      <Cursor1Time time="47.749 ns"></Cursor1Time>
+      <ZoomStartTime time="40.760 ns"></ZoomStartTime>
+      <ZoomEndTime time="54.071 ns"></ZoomEndTime>
+      <Cursor1Time time="12.389 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="183"></NameColumnWidth>
-      <ValueColumnWidth column_width="89"></ValueColumnWidth>
+      <ValueColumnWidth column_width="85"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="81" />
+   <WVObjectSize size="80" />
    <wvobject fp_name="/core_sim/core/debug_en" type="logic">
       <obj_property name="ElementShortName">debug_en</obj_property>
       <obj_property name="ObjectShortName">debug_en</obj_property>
@@ -45,10 +45,6 @@
       <obj_property name="ObjectShortName">debug_clk</obj_property>
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject fp_name="/core_sim/core/JALR" type="logic">
-      <obj_property name="ElementShortName">JALR</obj_property>
-      <obj_property name="ObjectShortName">JALR</obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/PC_EN_IF" type="logic">
       <obj_property name="ElementShortName">PC_EN_IF</obj_property>
