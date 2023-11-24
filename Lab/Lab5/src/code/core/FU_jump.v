@@ -26,7 +26,6 @@ module FU_jump(
 			rs2_data_reg <= rs2_data;
 			imm_reg <= imm;
 			PC_reg <= PC;
-
 			state <= 1;
 		end
 		else state <= 0;
