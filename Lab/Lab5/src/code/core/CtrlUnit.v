@@ -184,6 +184,7 @@ module CtrlUnit(
             FU_delay_cycles[3] <= 5'd7;         // MUL cycles
             FU_delay_cycles[4] <= 5'd24;        // DIV cycles
             FU_delay_cycles[5] <= 5'd2;         // JUMP cycles
+            FU_delay_cycles[0] <= 5'd0;
         end
         else begin
             if (reservation_reg[0] != 0) begin  // FU operation write back
