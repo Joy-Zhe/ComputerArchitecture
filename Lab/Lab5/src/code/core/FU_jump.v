@@ -33,7 +33,7 @@ module FU_jump(
 
 	assign PC_jump = JALR_reg ? rs1_data_reg + imm_reg : PC_reg + imm_reg; // JALR or JAL
 	assign PC_wb = PC_reg + 4; // PC + 4
-	cmp_32 cmp(.a(rs1_data_reg), .b(rs2_data_reg), .op(cmp_ctrl_reg), .res(cmp_res));
+	cmp_32 cmp(.a(rs1_data_reg), .b(rs2_data_reg), .ctrl(cmp_ctrl_reg), .c(cmp_res));
 
 
 endmodule

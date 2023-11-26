@@ -32,7 +32,7 @@ module FU_mem(
     end
 
     wire [31:0] mem_addr;
-    add_32 add(.a(rs1_data_reg), .b(imm_reg), .res(mem_addr));
+    add_32 add(.a(rs1_data_reg), .b(imm_reg), .c(mem_addr));
 
     RAM_B ram(.clk(clk),
               .rst(),

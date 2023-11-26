@@ -11,15 +11,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="88984fs"></ZoomStartTime>
-      <ZoomEndTime time="200835fs"></ZoomEndTime>
-      <Cursor1Time time="145000fs"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="63.521 ns"></ZoomEndTime>
+      <Cursor1Time time="12.360 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="156"></NameColumnWidth>
-      <ValueColumnWidth column_width="71"></ValueColumnWidth>
+      <NameColumnWidth column_width="164"></NameColumnWidth>
+      <ValueColumnWidth column_width="108"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="25" />
+   <WVObjectSize size="28" />
    <wvobject fp_name="/core_sim/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
@@ -47,6 +47,14 @@
    <wvobject fp_name="/core_sim/core/ctrl/reservation_reg" type="array">
       <obj_property name="ElementShortName">reservation_reg[0:31][2:0]</obj_property>
       <obj_property name="ObjectShortName">reservation_reg[0:31][2:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/use_FU" type="array">
+      <obj_property name="ElementShortName">use_FU[2:0]</obj_property>
+      <obj_property name="ObjectShortName">use_FU[2:0]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/ctrl/FU_write_to" type="array">
       <obj_property name="ElementShortName">FU_write_to[5:0][4:0]</obj_property>
@@ -55,10 +63,22 @@
    <wvobject fp_name="/core_sim/core/ctrl/FU_status" type="array">
       <obj_property name="ElementShortName">FU_status[5:0]</obj_property>
       <obj_property name="ObjectShortName">FU_status[5:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/ctrl/FU_hazard" type="logic">
       <obj_property name="ElementShortName">FU_hazard</obj_property>
       <obj_property name="ObjectShortName">FU_hazard</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/FU_writeback_en" type="array">
+      <obj_property name="ElementShortName">FU_writeback_en[5:0]</obj_property>
+      <obj_property name="ObjectShortName">FU_writeback_en[5:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/FU_delay_cycles" type="array">
+      <obj_property name="ElementShortName">FU_delay_cycles[5:0][4:0]</obj_property>
+      <obj_property name="ObjectShortName">FU_delay_cycles[5:0][4:0]</obj_property>
+      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/FU_ALU_EN" type="logic">
       <obj_property name="ElementShortName">FU_ALU_EN</obj_property>
@@ -112,12 +132,12 @@
       <obj_property name="ElementShortName">WAW</obj_property>
       <obj_property name="ObjectShortName">WAW</obj_property>
    </wvobject>
-   <wvobject fp_name="/core_sim/core/ctrl/use_FU" type="array">
-      <obj_property name="ElementShortName">use_FU[2:0]</obj_property>
-      <obj_property name="ObjectShortName">use_FU[2:0]</obj_property>
-   </wvobject>
    <wvobject fp_name="/core_sim/core/valid_ID" type="logic">
       <obj_property name="ElementShortName">valid_ID</obj_property>
       <obj_property name="ObjectShortName">valid_ID</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/reg_IF_en" type="logic">
+      <obj_property name="ElementShortName">reg_IF_en</obj_property>
+      <obj_property name="ObjectShortName">reg_IF_en</obj_property>
    </wvobject>
 </wave_config>

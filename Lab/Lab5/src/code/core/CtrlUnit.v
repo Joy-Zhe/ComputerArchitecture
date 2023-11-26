@@ -150,7 +150,7 @@ module CtrlUnit(
     // read after write
     wire RAW_rs1 = reservation_reg[0] != 0 && rs1 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
     wire RAW_rs2 = reservation_reg[0] != 0 && rs2 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
-    wire FU_hazard = reservation_reg[0] != 0 && FU_status[reservation_reg[0]] == 1;    //! to fill sth.in
+    wire FU_hazard = FU_status[use_FU] == 1;    //! to fill sth.in
 
     initial begin
         B_in_FU = 0;
@@ -188,9 +188,9 @@ module CtrlUnit(
         else begin
             if (reservation_reg[0] != 0) begin  // FU operation write back
                 FU_writeback_en[reservation_reg[0]] <= (FU_delay_cycles[reservation_reg[0]] == 0); // write back enable, 1: enable, 0: disable
-                if (FU_writeback_en[reservation_reg[0]]) begin
+                if (FU_delay_cycles[reservation_reg[0]] == 0) begin
                     FU_status[reservation_reg[0]] <= 6'b0;
-                    reservation_reg[0] <= 0;
+                    // reservation_reg[0] <= 0;
                     FU_write_to[reservation_reg[0]] <= 0;
                     // reset delay cycles
                     case (reservation_reg[0])
@@ -207,7 +207,12 @@ module CtrlUnit(
                     reservation_reg[31] <= 0;
                 end 
                 else begin // delay cycles - 1
-                    FU_delay_cycles[reservation_reg[0]] <= FU_delay_cycles[reservation_reg[0]] - 1;
+                    // FU_delay_cycles[reservation_reg[0]] <= FU_delay_cycles[reservation_reg[0]] - 1;
+                    for (i = 0; i < 31; i=i+1) begin
+                        if (reservation_reg[i] != 0 && FU_delay_cycles[reservation_reg[i]] > 0) begin
+                            FU_delay_cycles[reservation_reg[i]] <= FU_delay_cycles[reservation_reg[i]] - 1;
+                        end
+                    end
                 end
                 //! to fill sth.in
             end
@@ -215,42 +220,28 @@ module CtrlUnit(
                 for(i = 0; i < 31; i=i+1) begin
                     reservation_reg[i] <= reservation_reg[i + 1];
                 end
+                reservation_reg[31] <= 0;
             end
-            if (use_FU == 0) begin //  check whether FU is used, write back?
-                // 当前未使用任何一个FU
-                if (rd_used) begin
-                    // 当前指令需要写回
-                    if (WAW) begin // stall?
-                        // 当前指令写回寄存器与已经预约的寄存器相同
-                        //! to fill sth.in
-                    end
-                    else begin // write back
-                        // 当前指令写回寄存器与已经预约的寄存器不同
-                        
-                    end
-                end
-                else begin
-                    // 当前指令不需要写回
-                    //! to fill sth.in
-                end
+            if (use_FU == 0) begin //  check whether FU is used
                 //! to fill sth.in
+
             end
             else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
-                if(valid_ID) begin
-                    reg_ID_flush <= 1'b1; // flush next Instruction
-                end
                 //! to fill sth.in
+                // FU_status[use_FU] <= 0;
+                // FU_write_to[use_FU] <= 0;
+                FU_writeback_en[use_FU] <= 0;
             end
             else begin  // regist FU operation
                 //! to fill sth.in
                 FU_status[use_FU] <= 1;
                 FU_write_to[use_FU] <= rd;
                 // reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
-                for(i = 0; i < 31; i=i+1) begin
+                for(i = 1; i < 31; i=i+1) begin
                     // update reservation reg, regist new FU 
                     if(reservation_reg[i] == 0) begin
                         reservation_reg[i] <= use_FU;
-                        break;
+                        i = 31;
                     end
                 end
                 B_in_FU <= B_valid;

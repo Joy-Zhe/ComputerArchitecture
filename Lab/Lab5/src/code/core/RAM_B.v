@@ -25,7 +25,7 @@ module RAM_B (
 		for (i = 0; i < (1<<ADDR_WIDTH); i = i + 1) begin
 			data[i] = 32'b0;
 		end
-		$readmemh("%DATA_HEX_FILE%", data);
+		$readmemh("ram.hex", data);
 	end
 
 	reg [2:0]state = 0;
