@@ -153,7 +153,6 @@ module CtrlUnit(
     reg[5:0] FU_writeback_en; //write back enable
     reg[4:0] FU_delay_cycles [5:0]; // delay cycles
     reg reg_ID_flush_next; // flush next instruction
-    reg [2:0] test_sig;
     integer i;
     // write after write
     wire WAW = rd && ((rd == FU_write_to[1]) || 
@@ -176,7 +175,7 @@ module CtrlUnit(
                         || WAW 
                         || RAW_rs1 
                         || RAW_rs2
-                        || reservation_reg[FU_delay_cycles[use_FU] + 1] != 0;    //! to fill sth.in
+                        || reservation_reg[FU_delay_cycles[use_FU]] != 0;    //! to fill sth.in
 
     initial begin
         B_in_FU = 0;
@@ -226,8 +225,6 @@ module CtrlUnit(
             if(valid_ID) begin
                 if (use_FU == 0) begin //  check whether FU is used
                     //! to fill sth.in
-                    test_sig <= 3'd1;
-
                     for (i = 0; i < 31; i=i+1) begin
                         reservation_reg[i] <= reservation_reg[i + 1];
                     end
@@ -235,8 +232,6 @@ module CtrlUnit(
                 end
                 else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
                     //! to fill sth.in
-                    test_sig <= 3'd2;
-
                     FU_writeback_en[use_FU] <= 0;
                     B_in_FU <= 0;
                     J_in_FU <= 0;
@@ -247,8 +242,6 @@ module CtrlUnit(
                 end
                 else begin  // regist FU operation
                     //! to fill sth.in
-                    test_sig <= 3'd3;
-
                     FU_status[use_FU] <= 1;
                     FU_write_to[use_FU] <= rd;
                     reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;
@@ -261,12 +254,6 @@ module CtrlUnit(
                     B_in_FU <= B_valid;
                     J_in_FU <= JAL | JALR;
                 end
-            end
-            else begin
-                for (i = 0; i < 31; i=i+1) begin
-                    reservation_reg[i] <= reservation_reg[i + 1];
-                end
-                reservation_reg[31] <= 0;
             end
         end
     end
