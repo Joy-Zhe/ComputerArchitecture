@@ -208,79 +208,50 @@ module CtrlUnit(
             FU_delay_cycles[0] <= 5'd0;
         end
         else begin
-            if (reservation_reg[0] != 0) begin  // FU operation write back
-                FU_writeback_en[reservation_reg[0]] <= (FU_delay_cycles[reservation_reg[0]] == 0); // write back enable, 1: enable, 0: disable
-                if (FU_delay_cycles[reservation_reg[0]] == 0) begin
-                    FU_status[reservation_reg[0]] <= 6'b0;
-                    // reservation_reg[0] <= 0;
-                    FU_write_to[reservation_reg[0]] <= 0;
-                    // reset delay cycles
-                    case (reservation_reg[0])
-                        1: FU_delay_cycles[1] <= 5'd1;         // ALU cycles
-                        2: FU_delay_cycles[2] <= 5'd2;         // MEM cycles
-                        3: FU_delay_cycles[3] <= 5'd7;         // MUL cycles
-                        4: FU_delay_cycles[4] <= 5'd24;        // DIV cycles
-                        5: FU_delay_cycles[5] <= 5'd2;         // JUMP cycles
-                    endcase
-                    // shift reservation station
-                    for (i = 0; i < 31; i=i+1) begin 
-                        reservation_reg[i] <= reservation_reg[i + 1];
-                    end
-                    reservation_reg[31] <= 0;
-                end 
-                else begin // delay cycles - 1
-                    // FU_delay_cycles[reservation_reg[0]] <= FU_delay_cycles[reservation_reg[0]] - 1;
-                    for (i = 0; i < 31; i=i+1) begin
-                        if (reservation_reg[i] != 0 && FU_delay_cycles[reservation_reg[i]] > 0) begin
-                            FU_delay_cycles[reservation_reg[i]] <= FU_delay_cycles[reservation_reg[i]] - 1;
-                        end
-                    end
-                end
-                // FU_writeback_en[reservation_reg[0]] <= 1'b1;
-                // FU_writeback_en[reservation_reg[0]] <= 0;
-                // FU_status[reservation_reg[0]] <= 0;
-                // FU_write_to[reservation_reg[0]] <= 0;
-                //! to fill sth.in
-            end
-            else begin
-                for(i = 0; i < 31; i=i+1) begin
+            for (i = 0; i < 31; i=i+1) begin
+                if((i != FU_delay_cycles[use_FU]) || (i == FU_delay_cycles[use_FU] && reservation_reg[i + 1])) begin
                     reservation_reg[i] <= reservation_reg[i + 1];
                 end
-                reservation_reg[31] <= 0;
+            end
+            reservation_reg[31] <= 0;
+            if (reservation_reg[0] != 0) begin  // FU operation write back
+                FU_writeback_en[reservation_reg[0]] <= 1'b1; // write back enable, 1: enable, 0: disable
+                FU_status[reservation_reg[0]] <= 0;
+                FU_write_to[reservation_reg[0]] <= 0;
+                //! to fill sth.in
             end
             if(valid_ID) begin
                 if (use_FU == 0) begin //  check whether FU is used
                     //! to fill sth.in
+                    // for (i = 0; i < 31; i=i+1) begin
+                    //     reservation_reg[i] <= reservation_reg[i + 1];
+                    // end
+                    // reservation_reg[31] <= 0;
                 end
                 else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
                     //! to fill sth.in
                     FU_writeback_en[use_FU] <= 0;
                     B_in_FU <= 0;
                     J_in_FU <= 0;
+                    // for (i = 0; i < 31; i=i+1) begin
+                    //     reservation_reg[i] <= reservation_reg[i + 1];
+                    // end
+                    // reservation_reg[31] <= 0;
                 end
                 else begin  // regist FU operation
                     //! to fill sth.in
                     FU_status[use_FU] <= 1;
                     FU_write_to[use_FU] <= rd;
-                    // reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
-                    for(i = 1; i < 31; i=i+1) begin
-                        // update reservation reg, regist new FU 
-                        if(reservation_reg[i] == 0) begin
-                            reservation_reg[i] <= use_FU;
-                            i = 31;
-                        end
-                    end
-                    // reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;                             //! to fill sth.in
-                    // FU_status[use_FU] <= 1'b1;
-                    // FU_write_to[use_FU] <= rd;
+                    reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;
+                    // for (i = 0; i < 31; i=i+1) begin
+                    //     if(i != FU_delay_cycles[use_FU]) begin
+                    //         reservation_reg[i] <= reservation_reg[i + 1];
+                    //     end
+                    // end
+                    // reservation_reg[31] <= 0;
                     B_in_FU <= B_valid;
                     J_in_FU <= JAL | JALR;
                 end
-                // for (i = 0; i < 31; i=i+1) begin
-                //     reservation_reg[i] <= reservation_reg[i + 1];
-                // end
-                // reservation_reg[31] <= 0;
-                
             end
         end
     end
