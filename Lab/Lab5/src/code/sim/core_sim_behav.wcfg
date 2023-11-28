@@ -12,17 +12,21 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="63.521 ns"></ZoomEndTime>
-      <Cursor1Time time="12.360 ns"></Cursor1Time>
+      <ZoomEndTime time="15.501 ns"></ZoomEndTime>
+      <Cursor1Time time="19.960 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="164"></NameColumnWidth>
-      <ValueColumnWidth column_width="108"></ValueColumnWidth>
+      <ValueColumnWidth column_width="92"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="28" />
+   <WVObjectSize size="32" />
    <wvobject fp_name="/core_sim/clk" type="logic">
       <obj_property name="ElementShortName">clk</obj_property>
       <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/valid_ID" type="logic">
+      <obj_property name="ElementShortName">valid_ID</obj_property>
+      <obj_property name="ObjectShortName">valid_ID</obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/PC_IF" type="array">
       <obj_property name="ElementShortName">PC_IF[31:0]</obj_property>
@@ -70,10 +74,29 @@
       <obj_property name="ElementShortName">FU_hazard</obj_property>
       <obj_property name="ObjectShortName">FU_hazard</obj_property>
    </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/rs2" type="array">
+      <obj_property name="ElementShortName">rs2[4:0]</obj_property>
+      <obj_property name="ObjectShortName">rs2[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/rs1" type="array">
+      <obj_property name="ElementShortName">rs1[4:0]</obj_property>
+      <obj_property name="ObjectShortName">rs1[4:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/RAW_rs1" type="logic">
+      <obj_property name="ElementShortName">RAW_rs1</obj_property>
+      <obj_property name="ObjectShortName">RAW_rs1</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/WAW" type="logic">
+      <obj_property name="ElementShortName">WAW</obj_property>
+      <obj_property name="ObjectShortName">WAW</obj_property>
+   </wvobject>
+   <wvobject fp_name="/core_sim/core/ctrl/RAW_rs2" type="logic">
+      <obj_property name="ElementShortName">RAW_rs2</obj_property>
+      <obj_property name="ObjectShortName">RAW_rs2</obj_property>
+   </wvobject>
    <wvobject fp_name="/core_sim/core/ctrl/FU_writeback_en" type="array">
       <obj_property name="ElementShortName">FU_writeback_en[5:0]</obj_property>
       <obj_property name="ObjectShortName">FU_writeback_en[5:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/ctrl/FU_delay_cycles" type="array">
       <obj_property name="ElementShortName">FU_delay_cycles[5:0][4:0]</obj_property>
@@ -112,6 +135,10 @@
       <obj_property name="ElementShortName">reg_IF_en</obj_property>
       <obj_property name="ObjectShortName">reg_IF_en</obj_property>
    </wvobject>
+   <wvobject fp_name="/core_sim/core/branch_ctrl" type="logic">
+      <obj_property name="ElementShortName">branch_ctrl</obj_property>
+      <obj_property name="ObjectShortName">branch_ctrl</obj_property>
+   </wvobject>
    <wvobject fp_name="/core_sim/core/ctrl/reg_ID_flush" type="logic">
       <obj_property name="ElementShortName">reg_ID_flush</obj_property>
       <obj_property name="ObjectShortName">reg_ID_flush</obj_property>
@@ -119,18 +146,6 @@
    <wvobject fp_name="/core_sim/core/ctrl/reg_ID_flush_next" type="logic">
       <obj_property name="ElementShortName">reg_ID_flush_next</obj_property>
       <obj_property name="ObjectShortName">reg_ID_flush_next</obj_property>
-   </wvobject>
-   <wvobject fp_name="/core_sim/core/ctrl/RAW_rs1" type="logic">
-      <obj_property name="ElementShortName">RAW_rs1</obj_property>
-      <obj_property name="ObjectShortName">RAW_rs1</obj_property>
-   </wvobject>
-   <wvobject fp_name="/core_sim/core/ctrl/RAW_rs2" type="logic">
-      <obj_property name="ElementShortName">RAW_rs2</obj_property>
-      <obj_property name="ObjectShortName">RAW_rs2</obj_property>
-   </wvobject>
-   <wvobject fp_name="/core_sim/core/ctrl/WAW" type="logic">
-      <obj_property name="ElementShortName">WAW</obj_property>
-      <obj_property name="ObjectShortName">WAW</obj_property>
    </wvobject>
    <wvobject fp_name="/core_sim/core/valid_ID" type="logic">
       <obj_property name="ElementShortName">valid_ID</obj_property>

@@ -25,14 +25,23 @@ module CtrlUnit(
     output MEM_we,
     
     // WB
-    output[2:0] write_sel,
-    output[4:0] rd_ctrl,
-    output reg_write
+    output reg [2:0] write_sel,
+    output reg [4:0] rd_ctrl,
+    output reg reg_write
 );
 
-    assign reg_write = FU_writeback_en[reservation_reg[0]];
-    assign rd_ctrl = FU_write_to[reservation_reg[0]];
-    assign write_sel = reservation_reg[0];
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            reg_write <= 0;
+            write_sel <= 0;
+            rd_ctrl <= 0;
+        end
+        else begin
+            reg_write <= FU_writeback_en[reservation_reg[0]];
+            write_sel <= reservation_reg[0];
+            rd_ctrl <= FU_write_to[reservation_reg[0]];
+        end
+    end
 
     // instruction field
     wire[6:0] funct7 = inst[31:25];
@@ -146,11 +155,23 @@ module CtrlUnit(
     reg reg_ID_flush_next; // flush next instruction
     integer i;
     // write after write
-    wire WAW = reservation_reg[0] != 0 && FU_write_to[reservation_reg[0]] == rd;    //! to fill sth.in
+    wire WAW = rd && ((rd == FU_write_to[1]) || 
+                      (rd == FU_write_to[2]) || 
+                      (rd == FU_write_to[3]) || 
+                      (rd == FU_write_to[4]) ||
+                      (rd == FU_write_to[5]));    //! to fill sth.in
     // read after write
-    wire RAW_rs1 = reservation_reg[0] != 0 && rs1 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
-    wire RAW_rs2 = reservation_reg[0] != 0 && rs2 == FU_write_to[reservation_reg[0]];    //! to fill sth.in
-    wire FU_hazard = FU_status[use_FU] == 1;    //! to fill sth.in
+    wire RAW_rs1 = rs1 && ((rs1 == FU_write_to[1]) || 
+                           (rs1 == FU_write_to[2]) || 
+                           (rs1 == FU_write_to[3]) || 
+                           (rs1 == FU_write_to[4]) ||
+                           (rs1 == FU_write_to[5]));    //! to fill sth.in
+    wire RAW_rs2 = rs2 && ((rs2 == FU_write_to[1]) || 
+                           (rs2 == FU_write_to[2]) || 
+                           (rs2 == FU_write_to[3]) || 
+                           (rs2 == FU_write_to[4]) ||
+                           (rs2 == FU_write_to[5]));    //! to fill sth.in
+    wire FU_hazard = (FU_status[use_FU] == 1) || WAW || RAW_rs1 || RAW_rs2;    //! to fill sth.in
 
     initial begin
         B_in_FU = 0;
@@ -215,6 +236,10 @@ module CtrlUnit(
                         end
                     end
                 end
+                // FU_writeback_en[reservation_reg[0]] <= 1'b1;
+                // FU_writeback_en[reservation_reg[0]] <= 0;
+                // FU_status[reservation_reg[0]] <= 0;
+                // FU_write_to[reservation_reg[0]] <= 0;
                 //! to fill sth.in
             end
             else begin
@@ -223,30 +248,39 @@ module CtrlUnit(
                 end
                 reservation_reg[31] <= 0;
             end
-            if (use_FU == 0) begin //  check whether FU is used
-                //! to fill sth.in
-
-            end
-            else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
-                //! to fill sth.in
-                // FU_status[use_FU] <= 0;
-                // FU_write_to[use_FU] <= 0;
-                FU_writeback_en[use_FU] <= 0;
-            end
-            else begin  // regist FU operation
-                //! to fill sth.in
-                FU_status[use_FU] <= 1;
-                FU_write_to[use_FU] <= rd;
-                // reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
-                for(i = 1; i < 31; i=i+1) begin
-                    // update reservation reg, regist new FU 
-                    if(reservation_reg[i] == 0) begin
-                        reservation_reg[i] <= use_FU;
-                        i = 31;
-                    end
+            if(valid_ID) begin
+                if (use_FU == 0) begin //  check whether FU is used
+                    //! to fill sth.in
                 end
-                B_in_FU <= B_valid;
-                J_in_FU <= JAL | JALR;
+                else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
+                    //! to fill sth.in
+                    FU_writeback_en[use_FU] <= 0;
+                    B_in_FU <= 0;
+                    J_in_FU <= 0;
+                end
+                else begin  // regist FU operation
+                    //! to fill sth.in
+                    FU_status[use_FU] <= 1;
+                    FU_write_to[use_FU] <= rd;
+                    // reservation_reg[31] <= use_FU; // 先丢最后，之后向左移动
+                    for(i = 1; i < 31; i=i+1) begin
+                        // update reservation reg, regist new FU 
+                        if(reservation_reg[i] == 0) begin
+                            reservation_reg[i] <= use_FU;
+                            i = 31;
+                        end
+                    end
+                    // reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;                             //! to fill sth.in
+                    // FU_status[use_FU] <= 1'b1;
+                    // FU_write_to[use_FU] <= rd;
+                    B_in_FU <= B_valid;
+                    J_in_FU <= JAL | JALR;
+                end
+                // for (i = 0; i < 31; i=i+1) begin
+                //     reservation_reg[i] <= reservation_reg[i + 1];
+                // end
+                // reservation_reg[31] <= 0;
+                
             end
         end
     end
