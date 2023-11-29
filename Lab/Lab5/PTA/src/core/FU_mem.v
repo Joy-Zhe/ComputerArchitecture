@@ -17,17 +17,24 @@ module FU_mem(
     reg[31:0] rs1_data_reg, rs2_data_reg, imm_reg;
 
     //! to fill sth.in
+    reg CS = 0;
     always @(posedge clk) begin
-        if (EN & state == 0) begin
+        if (EN && state == 0) begin
             rs1_data_reg <= rs1_data;
             rs2_data_reg <= rs2_data;
             imm_reg <= imm;
             mem_w_reg <= mem_w;
             bhw_reg <= bhw;
             state <= 1;
+            CS <= 0;
         end 
+        else if(state == 1)begin
+            state <= state + 1;
+            CS <= 1;
+        end
         else begin
-            state <= state << 1;
+            CS <= 0;
+            state <= 0;
         end
     end
 
@@ -36,7 +43,7 @@ module FU_mem(
 
     RAM_B ram(.clk(clk),
               .rst(),
-              .cs(EN),
+              .cs(CS),
               .we(mem_w_reg),
               .addr(mem_addr),
               .din(rs2_data_reg),

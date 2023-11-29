@@ -37,7 +37,10 @@ module CtrlUnit(
             rd_ctrl <= 0;
         end
         else begin
-            reg_write <= FU_writeback_en[reservation_reg[0]];
+            // reg_write <= FU_writeback_en[reservation_reg[0]];
+            // write_sel <= reservation_reg[0];
+            // rd_ctrl <= FU_write_to[reservation_reg[0]];
+            reg_write <= (reservation_reg[0] != 0);
             write_sel <= reservation_reg[0];
             rd_ctrl <= FU_write_to[reservation_reg[0]];
         end
@@ -176,7 +179,7 @@ module CtrlUnit(
                         || WAW 
                         || RAW_rs1 
                         || RAW_rs2
-                        || reservation_reg[FU_delay_cycles[use_FU] + 1] != 0;    //! to fill sth.in
+                        || reservation_reg[FU_delay_cycles[use_FU]] != 0;    //! to fill sth.in
 
     initial begin
         B_in_FU = 0;
@@ -218,7 +221,7 @@ module CtrlUnit(
             // end
             // reservation_reg[31] <= 0;
             if (reservation_reg[0] != 0) begin  // FU operation write back
-                FU_writeback_en[reservation_reg[0]] <= 1'b1; // write back enable, 1: enable, 0: disable
+                FU_writeback_en[reservation_reg[0]] <= 1'b0; // write back disable, 1: enable, 0: disable
                 FU_status[reservation_reg[0]] <= 0;
                 FU_write_to[reservation_reg[0]] <= 0;
                 //! to fill sth.in
@@ -237,7 +240,7 @@ module CtrlUnit(
                     //! to fill sth.in
                     test_sig <= 3'd2;
 
-                    FU_writeback_en[use_FU] <= 0;
+                    // FU_writeback_en[use_FU] <= 0;
                     B_in_FU <= 0;
                     J_in_FU <= 0;
                     for (i = 0; i < 31; i=i+1) begin
@@ -250,10 +253,11 @@ module CtrlUnit(
                     test_sig <= 3'd3;
 
                     FU_status[use_FU] <= 1;
+                    FU_writeback_en[use_FU] <= 1'b1;
                     FU_write_to[use_FU] <= rd;
-                    reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;
+                    reservation_reg[FU_delay_cycles[use_FU] - 1] <= use_FU;
                     for (i = 0; i < 31; i=i+1) begin
-                        if(i != FU_delay_cycles[use_FU]) begin
+                        if(i != FU_delay_cycles[use_FU] - 1) begin
                             reservation_reg[i] <= reservation_reg[i + 1];
                         end
                     end

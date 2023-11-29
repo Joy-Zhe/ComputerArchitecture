@@ -37,7 +37,10 @@ module CtrlUnit(
             rd_ctrl <= 0;
         end
         else begin
-            reg_write <= FU_writeback_en[reservation_reg[0]];
+            // reg_write <= FU_writeback_en[reservation_reg[0]];
+            // write_sel <= reservation_reg[0];
+            // rd_ctrl <= FU_write_to[reservation_reg[0]];
+            reg_write <= (reservation_reg[0] != 0);
             write_sel <= reservation_reg[0];
             rd_ctrl <= FU_write_to[reservation_reg[0]];
         end
@@ -153,6 +156,7 @@ module CtrlUnit(
     reg[5:0] FU_writeback_en; //write back enable
     reg[4:0] FU_delay_cycles [5:0]; // delay cycles
     reg reg_ID_flush_next; // flush next instruction
+    reg [2:0] test_sig;
     integer i;
     // write after write
     wire WAW = rd && ((rd == FU_write_to[1]) || 
@@ -217,7 +221,7 @@ module CtrlUnit(
             // end
             // reservation_reg[31] <= 0;
             if (reservation_reg[0] != 0) begin  // FU operation write back
-                FU_writeback_en[reservation_reg[0]] <= 1'b1; // write back enable, 1: enable, 0: disable
+                FU_writeback_en[reservation_reg[0]] <= 1'b0; // write back disable, 1: enable, 0: disable
                 FU_status[reservation_reg[0]] <= 0;
                 FU_write_to[reservation_reg[0]] <= 0;
                 //! to fill sth.in
@@ -225,6 +229,8 @@ module CtrlUnit(
             if(valid_ID) begin
                 if (use_FU == 0) begin //  check whether FU is used
                     //! to fill sth.in
+                    test_sig <= 3'd1;
+
                     for (i = 0; i < 31; i=i+1) begin
                         reservation_reg[i] <= reservation_reg[i + 1];
                     end
@@ -232,7 +238,9 @@ module CtrlUnit(
                 end
                 else if (FU_hazard | reg_ID_flush | reg_ID_flush_next) begin   // stall
                     //! to fill sth.in
-                    FU_writeback_en[use_FU] <= 0;
+                    test_sig <= 3'd2;
+
+                    // FU_writeback_en[use_FU] <= 0;
                     B_in_FU <= 0;
                     J_in_FU <= 0;
                     for (i = 0; i < 31; i=i+1) begin
@@ -242,11 +250,14 @@ module CtrlUnit(
                 end
                 else begin  // regist FU operation
                     //! to fill sth.in
+                    test_sig <= 3'd3;
+
                     FU_status[use_FU] <= 1;
+                    FU_writeback_en[use_FU] <= 1'b1;
                     FU_write_to[use_FU] <= rd;
-                    reservation_reg[FU_delay_cycles[use_FU]] <= use_FU;
+                    reservation_reg[FU_delay_cycles[use_FU] - 1] <= use_FU;
                     for (i = 0; i < 31; i=i+1) begin
-                        if(i != FU_delay_cycles[use_FU]) begin
+                        if(i != FU_delay_cycles[use_FU] - 1) begin
                             reservation_reg[i] <= reservation_reg[i + 1];
                         end
                     end
@@ -254,6 +265,12 @@ module CtrlUnit(
                     B_in_FU <= B_valid;
                     J_in_FU <= JAL | JALR;
                 end
+            end
+            else begin
+                for (i = 0; i < 31; i=i+1) begin
+                    reservation_reg[i] <= reservation_reg[i + 1];
+                end
+                reservation_reg[31] <= 0;
             end
         end
     end
