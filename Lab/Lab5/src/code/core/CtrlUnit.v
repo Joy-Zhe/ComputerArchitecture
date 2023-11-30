@@ -159,11 +159,23 @@ module CtrlUnit(
     reg [2:0] test_sig;
     integer i;
     // write after write
-    wire WAW = rd && ((rd == FU_write_to[1]) || 
-                      (rd == FU_write_to[2]) || 
-                      (rd == FU_write_to[3]) || 
-                      (rd == FU_write_to[4]) ||
-                      (rd == FU_write_to[5]));    //! to fill sth.in
+    reg[5:0] f;
+    // always @(posedge clk) begin
+    //     for (i = 0; i < 31; i=i+1) begin
+    //         if (i > FU_delay_cycles[use_FU]) begin
+    //             f[reservation_reg[i]] <= 1'b1;
+    //         end
+    //         else begin
+    //             f[reservation_reg[i]] <= 1'b0;
+    //         end
+    //     end
+    // end
+
+    wire WAW = rd && ((rd == FU_write_to[1] && !f[1]) || 
+                      (rd == FU_write_to[2] && !f[2]) || 
+                      (rd == FU_write_to[3] && !f[3]) || 
+                      (rd == FU_write_to[4] && !f[4]) ||
+                      (rd == FU_write_to[5] && !f[5]));    //! to fill sth.in
     // read after write
     wire RAW_rs1 = rs1 && ((rs1 == FU_write_to[1]) || 
                            (rs1 == FU_write_to[2]) || 
@@ -175,7 +187,7 @@ module CtrlUnit(
                            (rs2 == FU_write_to[3]) || 
                            (rs2 == FU_write_to[4]) ||
                            (rs2 == FU_write_to[5]));    //! to fill sth.in
-    wire FU_hazard = (FU_status[use_FU] == 1) 
+    wire FU_hazard = (FU_status[use_FU] == 1 && reservation_reg[0] != use_FU) 
                         || WAW 
                         || RAW_rs1 
                         || RAW_rs2
@@ -214,6 +226,12 @@ module CtrlUnit(
             FU_delay_cycles[4] <= 5'd24;        // DIV cycles
             FU_delay_cycles[5] <= 5'd2;         // JUMP cycles
             FU_delay_cycles[0] <= 5'd0;
+            f[0] <= 0;
+            f[1] <= 0;
+            f[2] <= 0;
+            f[3] <= 0;
+            f[4] <= 0;
+            f[5] <= 0;
         end
         else begin
             // for (i = 0; i < 31; i=i+1) begin
@@ -244,6 +262,9 @@ module CtrlUnit(
                     B_in_FU <= 0;
                     J_in_FU <= 0;
                     for (i = 0; i < 31; i=i+1) begin
+                        if (reservation_reg[FU_delay_cycles[use_FU]]) begin
+                            f[reservation_reg[FU_delay_cycles[use_FU]]] <= 1'b1;
+                        end
                         reservation_reg[i] <= reservation_reg[i + 1];
                     end
                     reservation_reg[31] <= 0;
@@ -252,9 +273,12 @@ module CtrlUnit(
                     //! to fill sth.in
                     test_sig <= 3'd3;
 
+                    for(i = 0; i < 6; i = i + 1) begin
+                        f[i] <= 0;
+                    end
                     FU_status[use_FU] <= 1;
-                    FU_writeback_en[use_FU] <= 1'b1;
-                    FU_write_to[use_FU] <= rd;
+                    FU_writeback_en[use_FU] <= 1'b1 & rd_used;
+                    FU_write_to[use_FU] <= rd & {5{rd_used}};
                     reservation_reg[FU_delay_cycles[use_FU] - 1] <= use_FU;
                     for (i = 0; i < 31; i=i+1) begin
                         if(i != FU_delay_cycles[use_FU] - 1) begin

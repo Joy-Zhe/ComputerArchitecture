@@ -1,3 +1,64 @@
+2023.1:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.2.2:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.2.1:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.2:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.1.2:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.1.1:
+ * Version 5.1 (Rev. 19)
+ * No changes
+
+2022.1:
+ * Version 5.1 (Rev. 19)
+ * General: Matlab demonstration smoke test updated. No change to core functionality.
+ * Revision change in one or more subcores
+
+2021.2.2:
+ * Version 5.1 (Rev. 18)
+ * No changes
+
+2021.2.1:
+ * Version 5.1 (Rev. 18)
+ * No changes
+
+2021.2:
+ * Version 5.1 (Rev. 18)
+ * No changes
+
+2021.1.1:
+ * Version 5.1 (Rev. 18)
+ * No changes
+
+2021.1:
+ * Version 5.1 (Rev. 18)
+ * Revision change in one or more subcores
+
+2020.3:
+ * Version 5.1 (Rev. 17)
+ * No changes
+
+2020.2.2:
+ * Version 5.1 (Rev. 17)
+ * No changes
+
+2020.2.1:
+ * Version 5.1 (Rev. 17)
+ * No changes
+
 2020.2:
  * Version 5.1 (Rev. 17)
  * Revision change in one or more subcores
@@ -183,7 +244,7 @@
  * Native Vivado Release
  * There have been no functional or interface changes to this IP.  The version number has changed to support unique versioning in Vivado starting with 2013.1.
 
-(c) Copyright 2002 - 2020 Xilinx, Inc. All rights reserved.
+(c) Copyright 2002 - 2023 Xilinx, Inc. All rights reserved.
 
 This file contains confidential and proprietary information
 of Xilinx, Inc. and is protected under U.S. and

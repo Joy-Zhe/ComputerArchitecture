@@ -13,16 +13,28 @@ module FU_ALU(
         state = 0;
     end
 
+    reg[3:0] Control_1;
+    reg[31:0] A_1, B_1;
+
     reg[3:0] Control;
     reg[31:0] A, B;
 
     always@(posedge clk) begin
-        if(EN & state == 0) begin // state == 0
+        if(EN) begin
             //! to fill sth.in
-            Control <= ALUControl;
-            A <= ALUA;
-            B <= ALUB;
+            Control_1 <= ALUControl;
+            A_1 <= ALUA;
+            B_1 <= ALUB;
             state <= 1;
+            Control <= Control_1;
+            A <= A_1;
+            B <= B_1; 
+        end
+        else if (state == 1) begin
+            state <= 0;
+            Control <= Control_1;
+            A <= A_1;
+            B <= B_1; 
         end
         else state <= 0;
     end

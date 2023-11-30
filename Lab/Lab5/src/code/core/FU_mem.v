@@ -17,6 +17,9 @@ module FU_mem(
     reg[31:0] rs1_data_reg, rs2_data_reg, imm_reg;
 
     //! to fill sth.in
+    reg mem_w_reg_2;
+    reg[2:0] bhw_reg_2;
+    reg[31:0] rs1_data_reg_2, rs2_data_reg_2, imm_reg_2;
     reg CS = 0;
     always @(posedge clk) begin
         if (EN && state == 0) begin
@@ -29,7 +32,12 @@ module FU_mem(
             CS <= 0;
         end 
         else if(state == 1)begin
-            state <= state + 1;
+            rs1_data_reg_2 <= rs1_data_reg;
+            rs2_data_reg_2 <= rs2_data_reg;
+            imm_reg_2 <= imm_reg;
+            mem_w_reg_2 <= mem_w_reg;
+            bhw_reg_2 <= bhw_reg;
+            state <= 0;
             CS <= 1;
         end
         else begin
@@ -39,14 +47,14 @@ module FU_mem(
     end
 
     wire [31:0] mem_addr;
-    add_32 add(.a(rs1_data_reg), .b(imm_reg), .c(mem_addr));
+    add_32 add(.a(rs1_data_reg_2), .b(imm_reg_2), .c(mem_addr));
 
     RAM_B ram(.clk(clk),
               .rst(),
               .cs(CS),
-              .we(mem_w_reg),
+              .we(mem_w_reg_2),
               .addr(mem_addr),
-              .din(rs2_data_reg),
+              .din(rs2_data_reg_2),
               .dout(mem_data),
               .stall(),
               .ack()
