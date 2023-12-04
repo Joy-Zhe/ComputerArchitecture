@@ -1,0 +1,5 @@
+vhdl xil_defaultlib  \
+"../../../../Exp5.gen/sources_1/ip/multiplier/sim/multiplier.vhd" \
+
+# Do not sort compile order
+nosort

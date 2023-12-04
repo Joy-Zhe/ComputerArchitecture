@@ -2,10 +2,10 @@
 -- Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2023.1 (win64) Build 3865809 Sun May  7 15:05:29 MDT 2023
--- Date        : Thu Nov 30 15:23:32 2023
--- Host        : LAPTOP-V3ASLSR1 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub
---               c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.gen/sources_1/ip/divider/divider_stub.vhdl
+-- Date        : Thu Nov 30 15:00:46 2023
+-- Host        : NotAsleep running 64-bit major release  (build 9200)
+-- Command     : write_vhdl -force -mode synth_stub -rename_top divider -prefix
+--               divider_ divider_stub.vhdl
 -- Design      : divider
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7k325tffg676-2L
