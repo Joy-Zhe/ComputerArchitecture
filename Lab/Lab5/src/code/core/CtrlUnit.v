@@ -37,10 +37,7 @@ module CtrlUnit(
             rd_ctrl <= 0;
         end
         else begin
-            // reg_write <= FU_writeback_en[reservation_reg[0]];
-            // write_sel <= reservation_reg[0];
-            // rd_ctrl <= FU_write_to[reservation_reg[0]];
-            reg_write <= (reservation_reg[0] != 0);
+            reg_write <= FU_writeback_en[reservation_reg[0]];
             write_sel <= reservation_reg[0];
             rd_ctrl <= FU_write_to[reservation_reg[0]];
         end
