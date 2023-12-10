@@ -1,0 +1,52 @@
+{
+  "inst_hex_file": "src/core/rom.hex",
+  "data_hex_file": "src/core/ram.hex",
+  "simulation_cycle": 100,
+  "config": {
+    "max_fu_num": 6,
+    "fu": [
+      {
+        "id": 1,
+        "type": "alu",
+        "latency": 0
+      },
+      {
+        "id": 2,
+        "type": "mem",
+        "latency": 1,
+        "mem_exclusive_cycle": [1, 1]
+      },
+      {
+        "id": 3,
+        "type": "mul",
+        "latency": 6
+      },
+      {
+        "id": 4,
+        "type": "div",
+        "latency": 23
+      },
+      {
+        "id": 5,
+        "type": "jump",
+        "latency": 1,
+        "pc_latency": 1
+      }
+    ],
+    "op_width": 5,
+    "q_width": 3,
+    "q_map": [null, 1, 2, 3, 4, 5],
+    "q_null": 0,
+    "rrs_width": 3,
+    "rrs_map": [null, 1, 2, 3, 4, 5],
+    "rrs_null": 0,
+    "data_mem_size": 128,
+    "multiplier_latency": 6,
+    "divider_latency": 23,
+    "settings": {
+      "reserve for all ops": false,
+      "reserve for x0": false,
+      "predict not taken": true
+    }
+  }
+}
