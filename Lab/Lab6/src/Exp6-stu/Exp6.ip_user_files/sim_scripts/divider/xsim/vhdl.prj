@@ -1,0 +1,4 @@
+vhdl xil_defaultlib  \
+"../../../../Exp6.gen/sources_1/ip/divider/sim/divider.vhd" \
+
+nosort

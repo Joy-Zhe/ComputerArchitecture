@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2023.1 (64-bit)
+# SW Build 3865809 on Sun May  7 15:05:29 MDT 2023
+# IP Build 3864474 on Sun May  7 20:36:21 MDT 2023
+# SharedData Build 3865790 on Sun May 07 13:33:03 MDT 2023
+# Start of session at: Thu Nov 30 16:31:47 2023
+# Process ID: 22176
+# Current directory: C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1
+# Command line: vivado.exe -log divider.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source divider.tcl
+# Log file: C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider.vds
+# Journal file: C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1\vivado.jou
+# Running On: LAPTOP-V3ASLSR1, OS: Windows, CPU Frequency: 3294 MHz, CPU Physical cores: 16, Host memory: 33737 MB
+#-----------------------------------------------------------
+source divider.tcl -notrace
+create_project: Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 456.055 ; gain = 161.512
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: divider
+INFO: [IP_Flow 19-6922] IPCACHE: Exporting cached entry 3d2e9791c71602df to dir: C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1
+INFO: [IP_Flow 19-6928] IPCACHE: copied cached file c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.cache/ip/2023.1/3/d/3d2e9791c71602df/divider.dcp to C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider.dcp.
+INFO: [IP_Flow 19-6928] IPCACHE: copied cached file c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.cache/ip/2023.1/3/d/3d2e9791c71602df/divider_sim_netlist.v to C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider_sim_netlist.v.
+INFO: [IP_Flow 19-6928] IPCACHE: copied cached file c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.cache/ip/2023.1/3/d/3d2e9791c71602df/divider_sim_netlist.vhdl to C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider_sim_netlist.vhdl.
+INFO: [IP_Flow 19-6928] IPCACHE: copied cached file c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.cache/ip/2023.1/3/d/3d2e9791c71602df/divider_stub.v to C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider_stub.v.
+INFO: [IP_Flow 19-6928] IPCACHE: copied cached file c:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.cache/ip/2023.1/3/d/3d2e9791c71602df/divider_stub.vhdl to C:/code/ComputerArchitecture/Lab/Lab5/src/Exp5.runs/divider_synth_1/divider_stub.vhdl.
+INFO: [IP_Flow 19-4838] Using cached IP synthesis design for IP divider, cache-ID = 3d2e9791c71602df.
+INFO: [Common 17-206] Exiting Vivado at Thu Nov 30 16:31:56 2023...
