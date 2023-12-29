@@ -16,7 +16,7 @@ module core_sim;
     initial begin
         clk = 0;
         rst = 1;
-        #5 rst = 0;	// Wait 100 ns for global reset to finish
+        #2 rst = 0;	// Wait 100 ns for global reset to finish
     end
 
     always #1 clk = ~clk;

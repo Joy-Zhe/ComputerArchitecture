@@ -12,10 +12,10 @@ module RAM_B(
     reg[7:0] data[0:127];
 
     initial	begin
-        $readmemh("D:/V20/Exp6/code/core/ram.hex", data);
+        $readmemh("D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/ram.hex", data);
     end
 
-    always @ (negedge clka) begin
+    always @ (posedge clka) begin
         if (wea & ~|addra[31:7]) begin
             data[addra[6:0]] <= dina[7:0];
             if(mem_u_b_h_w[0] | mem_u_b_h_w[1])

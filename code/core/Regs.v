@@ -1,0 +1,183 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date:    21:34:44 03/12/2012 
+// Design Name: 
+// Module Name:    Regs 
+// Project Name: 
+// Target Devices: 
+// Tool versions: 
+// Description: 
+//
+// Dependencies: 
+//
+// Revision: 
+// Revision 0.01 - File Created
+// Additional Comments: 
+//
+//////////////////////////////////////////////////////////////////////////////////
+
+module Regs(input clk,
+			input rst,	
+			// for CtrlUnit
+			input [4:0] rs1_addr,
+			input [4:0] rs2_addr,
+			output [31:0] rs1_val,
+			output [31:0] rs2_val,
+			//	为每一个FU分配对应的读写口
+			//	ALU
+			// input [4:0] R_addr_A_ALU1, 
+			// input [4:0] R_addr_B_ALU1, 
+			input [4:0] Wt_addr_ALU1, 
+			input [31:0]Wt_data_ALU1, 
+			input L_S_ALU1, 
+			// output [31:0] rdata_A_ALU1, 
+			// output [31:0] rdata_B_ALU1,
+
+			// input [4:0] R_addr_A_ALU2, 
+			// input [4:0] R_addr_B_ALU2, 
+			input [4:0] Wt_addr_ALU2, 
+			input [31:0]Wt_data_ALU2, 
+			input L_S_ALU2, 
+			// output [31:0] rdata_A_ALU2, 
+			// output [31:0] rdata_B_ALU2,
+
+			// input [4:0] R_addr_A_ALU3, 
+			// input [4:0] R_addr_B_ALU3, 
+			input [4:0] Wt_addr_ALU3, 
+			input [31:0]Wt_data_ALU3, 
+			input L_S_ALU3, 
+			// output [31:0] rdata_A_ALU3, 
+			// output [31:0] rdata_B_ALU3,
+
+			//	JUMP
+			// input [4:0] R_addr_A_JUMP, 
+			// input [4:0] R_addr_B_JUMP, 
+			input [4:0] Wt_addr_JUMP, 
+			input [31:0]Wt_data_JUMP, 
+			input L_S_JUMP, 
+			// output [31:0] rdata_A_JUMP, 
+			// output [31:0] rdata_B_JUMP,
+			
+			//	MEM
+			// input [4:0] R_addr_A_MEM1, 
+			// input [4:0] R_addr_B_MEM1, 
+			input [4:0] Wt_addr_MEM1, 
+			input [31:0]Wt_data_MEM1, 
+			input L_S_MEM1, 
+			// output [31:0] rdata_A_MEM1, 
+			// output [31:0] rdata_B_MEM1,
+
+			// input [4:0] R_addr_A_MEM2, 
+			// input [4:0] R_addr_B_MEM2, 
+			input [4:0] Wt_addr_MEM2, 
+			input [31:0]Wt_data_MEM2, 
+			input L_S_MEM2, 
+			// output [31:0] rdata_A_MEM2, 
+			// output [31:0] rdata_B_MEM2,
+
+			//	MUL
+			// input [4:0] R_addr_A_MUL1, 
+			// input [4:0] R_addr_B_MUL1, 
+			input [4:0] Wt_addr_MUL1, 
+			input [31:0]Wt_data_MUL1, 
+			input L_S_MUL1, 
+			// output [31:0] rdata_A_MUL1, 
+			// output [31:0] rdata_B_MUL1,
+
+			// input [4:0] R_addr_A_MUL2, 
+			// input [4:0] R_addr_B_MUL2, 
+			input [4:0] Wt_addr_MUL2, 
+			input [31:0]Wt_data_MUL2, 
+			input L_S_MUL2, 
+			// output [31:0] rdata_A_MUL2, 
+			// output [31:0] rdata_B_MUL2,
+
+			//	DIV
+			// input [4:0] R_addr_A_DIV1, 
+			// input [4:0] R_addr_B_DIV1, 
+			input [4:0] Wt_addr_DIV1, 
+			input [31:0]Wt_data_DIV1, 
+			input L_S_DIV1, 
+			// output [31:0] rdata_A_DIV1, 
+			// output [31:0] rdata_B_DIV1,
+
+			// input [4:0] R_addr_A_DIV2, 
+			// input [4:0] R_addr_B_DIV2, 
+			input [4:0] Wt_addr_DIV2, 
+			input [31:0]Wt_data_DIV2, 
+			input L_S_DIV2, 
+			// output [31:0] rdata_A_DIV2, 
+			// output [31:0] rdata_B_DIV2,
+
+			input [4:0] Debug_addr,         // debug address
+			output[31:0] Debug_regs        // debug data
+);
+
+	reg [31:0] register [1:31]; 				// r1 - r31
+	integer i;
+
+
+	// fill sth. here
+	// assign rdata_A_JUMP = (R_addr_A_JUMP == 0) ? 0 : register[R_addr_A_JUMP];		// read JUMP
+	// assign rdata_B_JUMP = (R_addr_B_JUMP == 0) ? 0 : register[R_addr_B_JUMP];   	// read JUMP
+
+	// assign rdata_A_ALU1 = (R_addr_A_ALU1 == 0) ? 0 : register[R_addr_A_ALU1];		// read ALU
+	// assign rdata_B_ALU1 = (R_addr_B_ALU1 == 0) ? 0 : register[R_addr_B_ALU1];	    // read ALU
+
+	// assign rdata_A_ALU2 = (R_addr_A_ALU2 == 0) ? 0 : register[R_addr_A_ALU2];		// read ALU
+	// assign rdata_B_ALU2 = (R_addr_B_ALU2 == 0) ? 0 : register[R_addr_B_ALU2];	    // read ALU
+
+	// assign rdata_A_ALU3 = (R_addr_A_ALU3 == 0) ? 0 : register[R_addr_A_ALU3];		// read ALU
+	// assign rdata_B_ALU3 = (R_addr_B_ALU3 == 0) ? 0 : register[R_addr_B_ALU3];	    // read ALU
+	
+	// assign rdata_A_MEM1 = (R_addr_A_MEM1 == 0) ? 0 : register[R_addr_A_MEM1];		// read MEM
+	// assign rdata_B_MEM1 = (R_addr_B_MEM1 == 0) ? 0 : register[R_addr_B_MEM1];	  	// read MEM	
+
+	// assign rdata_A_MEM2 = (R_addr_A_MEM2 == 0) ? 0 : register[R_addr_A_MEM2];		// read MEM
+	// assign rdata_B_MEM2 = (R_addr_B_MEM2 == 0) ? 0 : register[R_addr_B_MEM2];	  	// read MEM	
+
+	// assign rdata_A_MUL1 = (R_addr_A_MUL1 == 0) ? 0 : register[R_addr_A_MUL1];		// read MUL
+	// assign rdata_B_MUL1 = (R_addr_B_MUL1 == 0) ? 0 : register[R_addr_B_MUL1];		// read MUL
+
+	// assign rdata_A_MUL2 = (R_addr_A_MUL2 == 0) ? 0 : register[R_addr_A_MUL2];		// read MUL
+	// assign rdata_B_MUL2 = (R_addr_B_MUL2 == 0) ? 0 : register[R_addr_B_MUL2];		// read MUL
+	
+	// assign rdata_A_DIV1 = (R_addr_A_DIV1 == 0) ? 0 : register[R_addr_A_DIV1];		// read DIV
+	// assign rdata_B_DIV1 = (R_addr_B_DIV1 == 0) ? 0 : register[R_addr_B_DIV1];	  	// read DIV	
+
+	// assign rdata_A_DIV2 = (R_addr_A_DIV2 == 0) ? 0 : register[R_addr_A_DIV2];		// read DIV
+	// assign rdata_B_DIV2 = (R_addr_B_DIV2 == 0) ? 0 : register[R_addr_B_DIV2];	  	// read DIV	
+
+	assign rs1_val = (rs1_addr == 0) ? 0 : register[rs1_addr];		// read rs1
+	assign rs2_val = (rs2_addr == 0) ? 0 : register[rs2_addr];		// read rs2
+
+	//	write data
+	always @(negedge clk or posedge rst) 
+      begin
+		if (rst) 	 begin 			// reset
+		    for (i=1; i<32; i=i+1)
+		    	register[i] <= 0;	//i;
+		end 
+		else begin			
+		// fill sth. here	//	write
+			if (Wt_addr_ALU1 != 0 && L_S_ALU1 == 1) register[Wt_addr_ALU1] <= Wt_data_ALU1;		// write ALU
+			if (Wt_addr_ALU2 != 0 && L_S_ALU2 == 1) register[Wt_addr_ALU2] <= Wt_data_ALU2;		// write ALU
+			if (Wt_addr_ALU3 != 0 && L_S_ALU3 == 1) register[Wt_addr_ALU3] <= Wt_data_ALU3;		// write ALU
+			if (Wt_addr_JUMP != 0 && L_S_JUMP == 1) register[Wt_addr_JUMP] <= Wt_data_JUMP;	// write JUMP
+			if (Wt_data_MEM1 != 0 && L_S_MEM1 == 1) register[Wt_addr_MEM1] <= Wt_data_MEM1;		// write MEM
+			if (Wt_data_MEM2 != 0 && L_S_MEM2 == 1) register[Wt_addr_MEM2] <= Wt_data_MEM2;		// write MEM
+			if (Wt_addr_MUL1 != 0 && L_S_MUL1 == 1) register[Wt_addr_MUL1] <= Wt_data_MUL1;		// write MUL
+			if (Wt_addr_MUL2 != 0 && L_S_MUL2 == 1) register[Wt_addr_MUL2] <= Wt_data_MUL2;		// write MUL
+			if (Wt_addr_DIV1 != 0 && L_S_DIV1 == 1) register[Wt_addr_DIV1] <= Wt_data_DIV1;		// write DIV
+			if (Wt_addr_DIV2 != 0 && L_S_DIV2 == 1) register[Wt_addr_DIV2] <= Wt_data_DIV2;		// write DIV
+		end
+	end
+    	
+    assign Debug_regs = (Debug_addr == 0) ? 0 : register[Debug_addr];               //TEST
+
+endmodule
+
+
