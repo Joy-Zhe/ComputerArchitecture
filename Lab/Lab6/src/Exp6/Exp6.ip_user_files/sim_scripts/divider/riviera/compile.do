@@ -4,7 +4,7 @@ onerror {quit -force}
 transcript on
 
 vlib work
-vmap -link {D:/code/Exp6/Exp6.cache/compile_simlib/riviera}
+vmap -link {C:/code/ComputerArchitecture/Lab/Lab6/src/Exp6/Exp6.cache/compile_simlib/riviera}
 vlib riviera/xbip_utils_v3_0_10
 vlib riviera/axi_utils_v2_0_6
 vlib riviera/xbip_pipe_v3_0_6

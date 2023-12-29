@@ -8,7 +8,7 @@ module ROM_D(
     reg[31:0] inst_data[0:127];
 
     initial	begin
-        $readmemh("D:/code/Exp6/code/core/rom.hex", inst_data);
+        $readmemh("rom.hex", inst_data);
     end
 
     assign spo = inst_data[a];
