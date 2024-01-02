@@ -238,13 +238,10 @@ module  RV32core(
         .ALUControl(ALU2Control_ctrl),.ALUA(ALU2A_RO),.ALUB(ALU2B_RO),.res(ALU2out_FU),
         .zero(),.overflow());
 
-    FU_mem mem(.clk(debug_clk),.EN(FU_mem_EN),.finish(FU_mem_finish),
-        .mem_w(mem_w_ctrl),.bhw(bhw_ctrl),.rs1_data(rs1_data_RO_MEM),.rs2_data(rs2_data_RO_MEM),
-        .imm(imm_ctrl_MEM),.mem_data(mem_data_FU));
-
-    FU_mem mem2(.clk(debug_clk),.EN(FU_mem2_EN),.finish(FU_mem2_finish),
-        .mem_w(mem2_w_ctrl),.bhw(bhw_ctrl2),.rs1_data(rs1_data_RO_MEM2),.rs2_data(rs2_data_RO_MEM2),
-        .imm(imm_ctrl_MEM2),.mem_data(mem2_data_FU));
+    FU_mem mem(.clk(debug_clk),.EN(FU_mem_EN), .EN2(FU_mem2_EN), .finish(FU_mem_finish), .finish2(FU_mem2_finish),
+        .mem_w(mem_w_ctrl), .mem_w2(mem2_w_ctrl) ,.bhw(bhw_ctrl), .bhw2(bhw_ctrl2),.rs1_data(rs1_data_RO_MEM),.rs2_data(rs2_data_RO_MEM),
+        .imm(imm_ctrl_MEM),.mem_data(mem_data_FU), .mem2_data(mem2_data_FU),
+        .rs1_data2(rs1_data_RO_MEM2), .rs2_data2(rs2_data_RO_MEM2), .imm2(imm_ctrl_MEM2));
 
     FU_mul mu(.clk(debug_clk),.EN(FU_mul_EN),.finish(FU_mul_finish),
         .A(rs1_data_RO_MUL),.B(rs2_data_RO_MUL),.res(mulres_FU),
