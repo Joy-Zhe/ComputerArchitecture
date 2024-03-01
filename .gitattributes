@@ -1,0 +1,6 @@
+*.vhd linguist-language=verilog
+*.vhdl linguist-language=verilog
+*.v languist-language=verilog
+*.sv linguist-language=verilog
+*.svh linguist-language=verilog
+*.vho linguist-language=verilog

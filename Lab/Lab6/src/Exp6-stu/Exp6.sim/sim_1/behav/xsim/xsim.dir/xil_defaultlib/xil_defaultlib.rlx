@@ -1,0 +1,27 @@
+0.7
+2020.2
+May  7 2023
+15:24:31
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/Exp6.gen/sources_1/ip/divider/sim/divider.vhd,1703505657,vhdl,,,,divider,,,,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/Exp6.gen/sources_1/ip/multiplier/sim/multiplier.vhd,1703505650,vhdl,,,,multiplier,,,,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/Exp6.sim/sim_1/behav/xsim/glbl.v,1683266558,verilog,,,,glbl,,,,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/auxillary/debug_clk.v,1702532586,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/sim/core_sim.v,,debug_clk,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/MUX2T1_32.v,1630116496,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/RAM_B.v,,MUX2T1_32,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/REG32.v,1630116496,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/REG_IF_IS.v,,REG32,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/add_32.v,1702532586,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/cmp_32.v,,add_32,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/cmp_32.v,1702532586,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/auxillary/debug_clk.v,,cmp_32,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/CDBconflict.v,1703684648,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/CtrlUnit.v,,CDBconflict,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/CtrlDefine.vh,1703646662,verilog,,,,,,,,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/CtrlUnit.v,1703749993,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_ALU.v,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/CtrlDefine.vh,CtrlUnit,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_ALU.v,1703746370,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_div.v,,FU_ALU,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_div.v,1703069738,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_jump.v,,FU_div,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_jump.v,1703744072,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_mem.v,,FU_jump,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_mem.v,1703589100,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_mul.v,,FU_mem,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/FU_mul.v,1703589104,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/ImmGen.v,,FU_mul,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/ImmGen.v,1630116496,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/MUX2T1_32.v,,ImmGen,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/RAM_B.v,1703746306,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/REG32.v,,RAM_B,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/REG_IF_IS.v,1639194112,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/ROM_D.v,,REG_IF_IS,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/ROM_D.v,1703746299,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/RV32core.v,,ROM_D,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/RV32core.v,1703493434,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/Regs.v,,RV32core,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/core/Regs.v,1703249489,verilog,,D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/common/add_32.v,,Regs,,,../../../../code/auxillary;../../../../code/core,,,,,
+D:/code/Architecture/Lab/Lab6/src/Exp6-stu/code/sim/core_sim.v,1702532586,verilog,,,,core_sim,,,../../../../code/auxillary;../../../../code/core,,,,,
